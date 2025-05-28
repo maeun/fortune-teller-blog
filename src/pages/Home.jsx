@@ -4,17 +4,53 @@ import { useTranslation } from "react-i18next";
 
 const posts = [
   {
-    slug: "example",
+    slug: 'what-is-fortune',
+    title: { en: 'What is Fortune Telling?', tr: 'Fal Nedir?' },
+    preview: {
+      en: 'Discover how fortune telling evolved from ancient rituals to AI-powered insights.',
+      tr: 'Falcılık, kadim ritüellerden yapay zekâ destekli yorumlara nasıl evrildi, keşfedin.',
+    },
+  },
+  {
+    slug: 'ai-and-destiny',
+    title: { en: 'Can AI Predict Destiny?', tr: 'Yapay Zekâ Kaderi Tahmin Edebilir mi?' },
+    preview: {
+      en: 'Explore how artificial intelligence is transforming the way we reflect on the future.',
+      tr: 'Yapay zekâ, geleceğe dair düşünme biçimimizi nasıl dönüştürüyor, inceleyin.',
+    },
+  },
+  {
+    slug: 'future-trends',
+    title: { en: 'Future Trends in Fortune Tech', tr: 'Geleceğin Fal Teknolojileri' },
+    preview: {
+      en: 'From voice-based predictions to holographic oracles, the future is digital.',
+      tr: 'Sesli kehanetlerden holografik falcılara kadar falcılığın dijital geleceği.',
+    },
+  },
+  {
+    slug: 'origin-of-fortune',
     title: {
-      en: "What is Fortune Telling?",
-      tr: "Fal Nedir?",
+      en: 'When Did People Start Believing in Fortune Telling?',
+      tr: 'İnsanlar Falcılıkla Ne Zaman İlgilenmeye Başladı?',
     },
     preview: {
-      en: "Let’s explore how AI meets ancient wisdom in modern fortune telling.",
-      tr: "Yapay zekânın geleneksel fal kültürüyle nasıl buluştuğunu keşfedin.",
+      en: 'Journey through history to uncover how fortune telling began and why it still thrives.',
+      tr: 'Falcılığın tarihsel kökenlerine yolculuk ve günümüzde neden hâlâ popüler olduğunun cevabı.',
+    },
+  },
+  {
+    slug: 'birth-date-meaning',
+    title: {
+      en: 'What Your Birth Date Says About You',
+      tr: 'Doğum Tarihin Senin Hakkında Ne Söylüyor?',
+    },
+    preview: {
+      en: 'Your birthday might reveal your personality, life path, and hidden traits.',
+      tr: 'Doğum tarihin, kişiliğini ve yaşam yolunu nasıl yansıtıyor, birlikte keşfedelim.',
     },
   },
 ];
+
 
 export default function Home() {
   const { i18n } = useTranslation();
