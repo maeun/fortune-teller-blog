@@ -15,6 +15,12 @@ const resources = {
         fortune: "Fortune Telling",
         tarot: "Tarot Reading",
         dreams: "Dream Interpretation",
+        horoscope: "Horoscope",
+        numerology: "Numerology",
+        palmistry: "Palm Reading",
+        love: "Love & Relationships",
+        career: "Career & Success",
+        health: "Health & Wellness"
       },
       footer: {
         description: "Discover your destiny with our free fortune telling services. Get insights into your future through tarot readings, dream interpretation, and more.",
@@ -33,40 +39,56 @@ const resources = {
         loading: "Loading...",
         error: "An error occurred. Please try again.",
         noResults: "No results found.",
+        search: "Search",
+        latestPosts: "Latest Posts",
+        popularPosts: "Popular Posts",
+        relatedPosts: "Related Posts",
+        share: "Share",
+        category: "Category",
+        date: "Date",
+        author: "Author",
+        back: "Back",
+        backToHome: "Back to Home",
+        submit: "Submit",
+        name: "Name",
+        email: "Email",
+        subject: "Subject",
+        message: "Message",
+        send: "Send Message",
+        sending: "Sending...",
+        success: "Message sent successfully!",
+        error: "Failed to send message. Please try again.",
       },
-    },
-  },
-  ko: {
-    translation: {
-      nav: {
-        brand: "포춘텔러 블로그",
-        home: "홈",
-        blog: "블로그",
-        about: "소개",
-        contact: "문의하기",
-      },
-      categories: {
-        fortune: "운세",
-        tarot: "타로",
-        dreams: "꿈해몽",
-      },
-      footer: {
-        description: "무료 운세 서비스로 당신의 운명을 발견하세요. 타로, 꿈해몽 등 다양한 서비스를 통해 미래를 알아보세요.",
-        quickLinks: "바로가기",
-        categories: "카테고리",
-        newsletter: "뉴스레터",
-        newsletterDescription: "최신 업데이트와 인사이트를 받아보세요.",
-        emailPlaceholder: "이메일을 입력하세요",
-        subscribe: "구독하기",
-        rights: "모든 권리 보유.",
-        privacy: "개인정보처리방침",
-        terms: "이용약관",
-      },
-      common: {
-        readMore: "더 보기",
-        loading: "로딩 중...",
-        error: "오류가 발생했습니다. 다시 시도해주세요.",
-        noResults: "검색 결과가 없습니다.",
+      home: {
+        hero: {
+          title: "Discover Your Destiny",
+          subtitle: "Free Fortune Telling Services",
+          description: "Get insights into your future through tarot readings, dream interpretation, and more.",
+          cta: "Start Reading",
+        },
+        features: {
+          title: "Our Services",
+          tarot: {
+            title: "Tarot Reading",
+            description: "Get personalized insights through tarot card readings.",
+          },
+          dreams: {
+            title: "Dream Interpretation",
+            description: "Understand the hidden meanings in your dreams.",
+          },
+          horoscope: {
+            title: "Daily Horoscope",
+            description: "Check your daily horoscope for guidance.",
+          },
+          numerology: {
+            title: "Numerology",
+            description: "Discover the power of numbers in your life.",
+          },
+          palmistry: {
+            title: "Palm Reading",
+            description: "Learn what your palm lines reveal about your future.",
+          },
+        },
       },
     },
   },
@@ -74,7 +96,7 @@ const resources = {
 
 i18n.use(initReactI18next).init({
   resources,
-  lng: "ko",
+  lng: "en",
   fallbackLng: "en",
   interpolation: {
     escapeValue: false,

@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { marked } from 'marked';
+import { motion } from 'framer-motion';
+import { FaArrowLeft, FaCalendarAlt, FaClock, FaShare, FaStar, FaTag } from 'react-icons/fa';
 
 const markdownFiles = import.meta.glob('../posts/*/*.md', { as: 'raw' });
 
@@ -83,53 +85,87 @@ function Post() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-black text-white">
-        <div className="text-center">
-          <div className="text-4xl animate-spin">🔮</div>
-          <p>{t('loading')}</p>
-        </div>
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center"
+        >
+          <div className="text-4xl mb-4">🔮</div>
+          <p className="text-gray-600 dark:text-gray-400">{t('loading')}</p>
+        </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen px-4 py-8 bg-gradient-to-br from-indigo-950 via-purple-900 to-slate-900 text-purple-100">
-      <div className="max-w-4xl mx-auto">
-        <button onClick={() => navigate(-1)} className="mb-4 text-purple-300 hover:text-white flex items-center gap-2">
-          <ArrowLeft size={18} /> {t('back') || 'Back'}
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-4xl mx-auto px-4 py-16"
+      >
+        <button
+          onClick={() => navigate(-1)}
+          className="mb-8 text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 flex items-center gap-2 transition-colors"
+        >
+          <FaArrowLeft /> {t('back') || 'Back'}
         </button>
 
-        {metadata.title && (
-          <h1 className="text-3xl sm:text-5xl font-bold text-white mb-2">{metadata.title}</h1>
-        )}
-        {metadata.description && (
-          <p className="text-purple-300 mb-4">{metadata.description}</p>
-        )}
-
-        <div className="flex items-center gap-6 text-purple-400 text-sm mb-6">
-          {metadata.date && (
-            <span className="flex items-center gap-1"><Calendar size={14} />{metadata.date}</span>
+        <article className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+          {metadata.title && (
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              {metadata.title}
+            </h1>
           )}
-          <span className="flex items-center gap-1"><Clock size={14} />{readingTime} min read</span>
-          <button onClick={() => sharePost(metadata.title, window.location.href)} className="flex items-center gap-1 hover:text-purple-200 transition">
-            <Share2 size={14} /> Share
+          
+          {metadata.description && (
+            <p className="text-xl text-gray-600 dark:text-gray-300 mb-6">
+              {metadata.description}
+            </p>
+          )}
+
+          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-8">
+            {metadata.date && (
+              <span className="flex items-center gap-2">
+                <FaCalendarAlt />
+                {metadata.date}
+              </span>
+            )}
+            <span className="flex items-center gap-2">
+              <FaClock />
+              {readingTime} min read
+            </span>
+            {metadata.category && (
+              <span className="flex items-center gap-2">
+                <FaTag />
+                {metadata.category}
+              </span>
+            )}
+            <button
+              onClick={() => sharePost(metadata.title, window.location.href)}
+              className="flex items-center gap-2 text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors"
+            >
+              <FaShare /> Share
+            </button>
+          </div>
+
+          <div
+            className="prose dark:prose-invert max-w-none prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-600 dark:prose-p:text-gray-300 prose-a:text-purple-600 dark:prose-a:text-purple-400 hover:prose-a:text-purple-700 dark:hover:prose-a:text-purple-300"
+            dangerouslySetInnerHTML={{ __html: marked(content) }}
+          />
+        </article>
+
+        <div className="mt-12 text-center">
+          <button
+            onClick={() => navigate('/')}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-full shadow-lg transition-colors"
+          >
+            <FaStar /> {t('backToHome') || 'Back to Home'}
           </button>
         </div>
-
-        <div
-          className="prose prose-invert max-w-none prose-p:text-purple-200 prose-headings:text-purple-100 prose-a:text-purple-300 hover:prose-a:text-white"
-          dangerouslySetInnerHTML={{ __html: marked(content) }}
-        />
-      </div>
-
-      <div className="mt-12 text-center">
-        <button
-          onClick={() => navigate('/')}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-full shadow transition"
-        >
-          <Star size={16} /> {t('backToHome') || 'Back to Home'}
-        </button>
-      </div>
+      </motion.div>
     </div>
   );
 }

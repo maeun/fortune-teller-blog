@@ -1,19 +1,70 @@
 import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
+import { FaStar, FaRegClock, FaRegCalendarAlt } from 'react-icons/fa';
 
 const About = () => {
   const { t } = useTranslation();
   return (
-    <div className="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow p-8 animate-fade-in">
-      <h1 className="text-3xl font-bold text-purple-700 dark:text-purple-400 mb-4">{t('nav.about')}</h1>
-      <p className="text-gray-700 dark:text-gray-300 text-lg mb-4">
-        포춘텔러 블로그는 무료 운세, 사주, 타로, 궁합, 꿈해몽 등 다양한 운세 서비스를 제공하는 공간입니다.<br />
-        여러분의 미래와 운명을 함께 탐구하고, 삶의 방향성을 제시해 드립니다.<br />
-        <br />
-        <b>운세는 참고용입니다. 긍정적인 마음으로 즐겨주세요!</b>
-      </p>
-      <p className="text-gray-500 dark:text-gray-400 text-sm mt-8">
-        &copy; 2025 포춘텔러 블로그
-      </p>
+    <div className="max-w-4xl mx-auto px-4 py-16">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8"
+      >
+        <h1 className="text-4xl font-bold text-purple-700 dark:text-purple-400 mb-6">
+          About Fortune Teller Blog
+        </h1>
+        
+        <div className="prose dark:prose-invert max-w-none">
+          <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">
+            Welcome to Fortune Teller Blog, your trusted source for free fortune telling services and mystical insights. 
+            Our mission is to provide accurate, insightful, and accessible fortune telling services to help you navigate life's journey.
+          </p>
+
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">
+            Our Services
+          </h2>
+          <ul className="space-y-4 mb-8">
+            <li className="flex items-start">
+              <FaStar className="text-yellow-400 mt-1 mr-3" />
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Tarot Reading</h3>
+                <p className="text-gray-600 dark:text-gray-400">Get personalized insights through our comprehensive tarot card readings.</p>
+              </div>
+            </li>
+            <li className="flex items-start">
+              <FaStar className="text-yellow-400 mt-1 mr-3" />
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Dream Interpretation</h3>
+                <p className="text-gray-600 dark:text-gray-400">Understand the hidden meanings in your dreams with our expert interpretations.</p>
+              </div>
+            </li>
+            <li className="flex items-start">
+              <FaStar className="text-yellow-400 mt-1 mr-3" />
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Daily Horoscope</h3>
+                <p className="text-gray-600 dark:text-gray-400">Check your daily horoscope for guidance and insights into your day.</p>
+              </div>
+            </li>
+          </ul>
+
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">
+            Our Commitment
+          </h2>
+          <p className="text-gray-700 dark:text-gray-300 mb-6">
+            We are committed to providing accurate and insightful fortune telling services while maintaining the highest standards of professionalism and ethics. 
+            Our readings are meant to guide and inspire, not to predict the future with absolute certainty.
+          </p>
+
+          <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-6 mt-8">
+            <p className="text-purple-800 dark:text-purple-300 italic">
+              "Fortune telling is an art that combines intuition, wisdom, and guidance. 
+              Our goal is to help you find clarity and direction in your life's journey."
+            </p>
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 };
