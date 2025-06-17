@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { marked } from 'marked';
-import { ArrowLeft, Calendar, Clock, Share2, Star } from 'lucide-react';
 
 const markdownFiles = import.meta.glob('../posts/*/*.md', { as: 'raw' });
 

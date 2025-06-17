@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Sparkles } from "lucide-react";
 
 const posts = [
   {
@@ -122,7 +121,6 @@ export default function Home() {
       <div className="mt-12">
         <FloatingElement delay={1500}>
           <div className="inline-flex items-center gap-2 px-6 py-3 bg-purple-100 rounded-full text-purple-800 font-semibold shadow-sm">
-            <Sparkles className="animate-pulse" size={20} />
             {lang === "tr" ? "Daha fazla içerik yakında..." : "More content coming soon..."}
           </div>
         </FloatingElement>
