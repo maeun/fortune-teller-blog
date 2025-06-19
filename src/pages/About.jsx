@@ -5,12 +5,12 @@ import { FaStar, FaRegClock, FaRegCalendarAlt } from 'react-icons/fa';
 const About = () => {
   const { t } = useTranslation();
   return (
-    <div className="max-w-4xl mx-auto px-4 py-16">
+    <div className="w-full px-4 md:px-8 py-16">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8"
+        className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 md:p-12 max-w-4xl mx-auto"
       >
         <h1 className="text-4xl font-bold text-purple-700 dark:text-purple-400 mb-6">
           About Fortune Teller Blog

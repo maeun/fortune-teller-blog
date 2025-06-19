@@ -54,6 +54,8 @@ function Post() {
   const [metadata, setMetadata] = useState({});
   const [readingTime, setReadingTime] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [feedback, setFeedback] = useState(null);
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
   useEffect(() => {
     const key = Object.keys(markdownFiles).find((path) =>
@@ -99,12 +101,12 @@ function Post() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 w-full">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="max-w-4xl mx-auto px-4 py-16"
+        className="w-full px-4 md:px-8 py-16"
       >
         <button
           onClick={() => navigate(-1)}
@@ -113,7 +115,7 @@ function Post() {
           <FaArrowLeft /> {t('back') || 'Back'}
         </button>
 
-        <article className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+        <article className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 md:p-12 max-w-3xl mx-auto">
           {metadata.title && (
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
               {metadata.title}
@@ -156,6 +158,31 @@ function Post() {
             dangerouslySetInnerHTML={{ __html: marked(content) }}
           />
         </article>
+
+        {/* Feedback Section */}
+        <div className="mt-8 text-center">
+          {feedbackSubmitted ? (
+            <p className="text-green-600 dark:text-green-400 font-medium">{t('common.thankYouForFeedback') || 'Thank you for your feedback!'}</p>
+          ) : (
+            <>
+              <p className="mb-2 text-gray-700 dark:text-gray-300">{t('common.wasThisHelpful') || 'Was this post helpful?'}</p>
+              <button
+                onClick={() => { setFeedback('yes'); setFeedbackSubmitted(true); }}
+                className="inline-block px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-full mr-2 transition-colors"
+                aria-label="Yes, this was helpful"
+              >
+                {t('common.yes') || 'Yes'}
+              </button>
+              <button
+                onClick={() => { setFeedback('no'); setFeedbackSubmitted(true); }}
+                className="inline-block px-5 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-full transition-colors"
+                aria-label="No, this was not helpful"
+              >
+                {t('common.no') || 'No'}
+              </button>
+            </>
+          )}
+        </div>
 
         <div className="mt-12 text-center">
           <button

@@ -1,13 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { FaMoon, FaSun, FaBars, FaTimes } from 'react-icons/fa';
+import { FaBars, FaTimes } from 'react-icons/fa';
 
-const Navbar = ({ isDarkMode, toggleDarkMode, isMenuOpen, toggleMenu }) => {
+const Navbar = ({ isMenuOpen, toggleMenu }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const { t, i18n } = useTranslation();
   const location = useLocation();
+  const menuRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -18,6 +19,32 @@ const Navbar = ({ isDarkMode, toggleDarkMode, isMenuOpen, toggleMenu }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Prevent background scroll when mobile menu is open
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.classList.add('overflow-hidden');
+    } else {
+      document.body.classList.remove('overflow-hidden');
+    }
+    return () => {
+      document.body.classList.remove('overflow-hidden');
+    };
+  }, [isMenuOpen]);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    if (!isMenuOpen) return;
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        toggleMenu();
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isMenuOpen, toggleMenu]);
+
   const navLinks = [
     { path: '/', label: t('nav.home') },
     { path: '/blog', label: t('nav.blog') },
@@ -27,32 +54,32 @@ const Navbar = ({ isDarkMode, toggleDarkMode, isMenuOpen, toggleMenu }) => {
 
   return (
     <nav
-      className={`fixed w-full z-50 transition-all duration-300 ${
+      className={`w-full z-50 transition-all duration-300 ${
         isScrolled
-          ? 'bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-lg'
-          : 'bg-transparent'
+          ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-lg border-b border-purple-200 dark:border-purple-700'
+          : 'bg-white/90 dark:bg-gray-900/90 border-b border-purple-100 dark:border-purple-800'
       }`}
     >
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
+      <div className="w-full px-4 md:px-8">
+        <div className="flex justify-between items-center h-14">
           {/* Logo */}
           <Link
             to="/"
-            className="text-2xl font-bold text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors"
+            className="text-3xl font-extrabold tracking-tight text-purple-700 dark:text-purple-300 hover:text-purple-900 dark:hover:text-purple-100 transition-colors"
           >
             🔮 {t('nav.brand')}
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-10">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`text-sm font-medium transition-colors ${
+                className={`text-base font-semibold transition-colors ${
                   location.pathname === link.path
-                    ? 'text-purple-600 dark:text-purple-400'
-                    : 'text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400'
+                    ? 'text-purple-700 dark:text-purple-300 underline underline-offset-4'
+                    : 'text-gray-700 dark:text-gray-200 hover:text-purple-700 dark:hover:text-purple-300'
                 }`}
               >
                 {link.label}
@@ -62,39 +89,34 @@ const Navbar = ({ isDarkMode, toggleDarkMode, isMenuOpen, toggleMenu }) => {
             {/* Language Switcher */}
             <div className="flex items-center space-x-2">
               <button
-                onClick={() => i18n.changeLanguage('ko')}
-                className={`px-2 py-1 rounded ${
-                  i18n.language === 'ko'
-                    ? 'bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400'
-                    : 'text-gray-600 dark:text-gray-300'
-                }`}
+                onClick={() => i18n.changeLanguage('en')}
+                className={`px-2 py-1 rounded ${i18n.language === 'en' ? 'bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400' : 'text-gray-600 dark:text-gray-300'}`}
+                aria-label="Switch to English"
               >
-                🇰🇷
+                🇺🇸 EN
               </button>
               <button
-                onClick={() => i18n.changeLanguage('en')}
-                className={`px-2 py-1 rounded ${
-                  i18n.language === 'en'
-                    ? 'bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400'
-                    : 'text-gray-600 dark:text-gray-300'
-                }`}
+                onClick={() => i18n.changeLanguage('tr')}
+                className={`px-2 py-1 rounded ${i18n.language === 'tr' ? 'bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400' : 'text-gray-600 dark:text-gray-300'}`}
+                aria-label="Switch to Turkish"
               >
-                🇺🇸
+                🇹🇷 TR
+              </button>
+              <button
+                onClick={() => i18n.changeLanguage('ja')}
+                className={`px-2 py-1 rounded ${i18n.language === 'ja' ? 'bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400' : 'text-gray-600 dark:text-gray-300'}`}
+                aria-label="Switch to Japanese"
+              >
+                🇯🇵 JP
+              </button>
+              <button
+                onClick={() => i18n.changeLanguage('zh')}
+                className={`px-2 py-1 rounded ${i18n.language === 'zh' ? 'bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400' : 'text-gray-600 dark:text-gray-300'}`}
+                aria-label="Switch to Chinese"
+              >
+                🇨🇳 CN
               </button>
             </div>
-
-            {/* Dark Mode Toggle */}
-            <button
-              onClick={toggleDarkMode}
-              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-              aria-label="Toggle dark mode"
-            >
-              {isDarkMode ? (
-                <FaSun className="w-5 h-5 text-yellow-400" />
-              ) : (
-                <FaMoon className="w-5 h-5 text-gray-600" />
-              )}
-            </button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -116,6 +138,7 @@ const Navbar = ({ isDarkMode, toggleDarkMode, isMenuOpen, toggleMenu }) => {
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
+            ref={menuRef}
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
@@ -139,35 +162,32 @@ const Navbar = ({ isDarkMode, toggleDarkMode, isMenuOpen, toggleMenu }) => {
                 ))}
                 <div className="flex items-center space-x-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                   <button
-                    onClick={() => i18n.changeLanguage('ko')}
-                    className={`px-2 py-1 rounded ${
-                      i18n.language === 'ko'
-                        ? 'bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400'
-                        : 'text-gray-600 dark:text-gray-300'
-                    }`}
-                  >
-                    🇰🇷
-                  </button>
-                  <button
                     onClick={() => i18n.changeLanguage('en')}
-                    className={`px-2 py-1 rounded ${
-                      i18n.language === 'en'
-                        ? 'bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400'
-                        : 'text-gray-600 dark:text-gray-300'
-                    }`}
+                    className={`px-2 py-1 rounded ${i18n.language === 'en' ? 'bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400' : 'text-gray-600 dark:text-gray-300'}`}
+                    aria-label="Switch to English"
                   >
-                    🇺🇸
+                    🇺🇸 EN
                   </button>
                   <button
-                    onClick={toggleDarkMode}
-                    className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                    aria-label="Toggle dark mode"
+                    onClick={() => i18n.changeLanguage('tr')}
+                    className={`px-2 py-1 rounded ${i18n.language === 'tr' ? 'bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400' : 'text-gray-600 dark:text-gray-300'}`}
+                    aria-label="Switch to Turkish"
                   >
-                    {isDarkMode ? (
-                      <FaSun className="w-5 h-5 text-yellow-400" />
-                    ) : (
-                      <FaMoon className="w-5 h-5 text-gray-600" />
-                    )}
+                    🇹🇷 TR
+                  </button>
+                  <button
+                    onClick={() => i18n.changeLanguage('ja')}
+                    className={`px-2 py-1 rounded ${i18n.language === 'ja' ? 'bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400' : 'text-gray-600 dark:text-gray-300'}`}
+                    aria-label="Switch to Japanese"
+                  >
+                    🇯🇵 JP
+                  </button>
+                  <button
+                    onClick={() => i18n.changeLanguage('zh')}
+                    className={`px-2 py-1 rounded ${i18n.language === 'zh' ? 'bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400' : 'text-gray-600 dark:text-gray-300'}`}
+                    aria-label="Switch to Chinese"
+                  >
+                    🇨🇳 CN
                   </button>
                 </div>
               </div>

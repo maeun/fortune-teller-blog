@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -8,30 +8,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- 🧠 SEO Meta -->
-    <title>포춘텔러 블로그 - 무료 운세, 사주, 타로 서비스</title>
-    <meta name="description" content="무료 운세, 사주, 타로, 궁합, 꿈해몽 등 다양한 운세 서비스를 제공하는 포춘텔러 블로그입니다." />
-    <meta name="keywords" content="운세, 사주, 타로, 궁합, 꿈해몽, 무료운세, 무료사주, 무료타로" />
+    <title>Fortune Teller Blog - Free Fortune Telling Services</title>
+    <meta name="description" content="Discover your destiny with our free fortune telling services. Get insights into your future through tarot readings, dream interpretation, and more." />
+    <meta name="keywords" content="fortune telling, tarot reading, horoscope, dream interpretation, numerology, palm reading" />
     <meta name="author" content="Fortune Teller Blog" />
     <meta name="robots" content="index, follow" />
 
-    <!-- �� Canonical URL -->
+    <!-- 🔗 Canonical URL -->
     <link rel="canonical" href="https://fortune-teller-blog.web.app" />
 
     <!-- 📱 Social Preview -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="포춘텔러 블로그 - 무료 운세, 사주, 타로 서비스" />
-    <meta property="og:description" content="무료 운세, 사주, 타로, 궁합, 꿈해몽 등 다양한 운세 서비스를 제공하는 포춘텔러 블로그입니다." />
+    <meta property="og:title" content="Fortune Teller Blog - Free Fortune Telling Services" />
+    <meta property="og:description" content="Discover your destiny with our free fortune telling services. Get insights into your future through tarot readings, dream interpretation, and more." />
     <meta property="og:url" content="https://fortune-teller-blog.web.app" />
     <meta property="og:image" content="https://fortune-teller-blog.web.app/og-image.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="포춘텔러 블로그 - 무료 운세, 사주, 타로 서비스" />
-    <meta name="twitter:description" content="무료 운세, 사주, 타로, 궁합, 꿈해몽 등 다양한 운세 서비스를 제공하는 포춘텔러 블로그입니다." />
+    <meta name="twitter:title" content="Fortune Teller Blog - Free Fortune Telling Services" />
+    <meta name="twitter:description" content="Discover your destiny with our free fortune telling services. Get insights into your future through tarot readings, dream interpretation, and more." />
     <meta name="twitter:image" content="https://fortune-teller-blog.web.app/og-image.jpg" />
 
     <!-- 📱 PWA & Icons -->
     <link rel="icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
+
+    <!-- 🌙 Dark Mode Script -->
+    <script>
+      // Check for saved theme preference, otherwise use system preference
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    </script>
 
     <!-- 📊 Google Analytics (replace ID) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>

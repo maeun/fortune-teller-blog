@@ -15,18 +15,18 @@ const Footer = () => {
   ];
 
   const socialLinks = [
-    { icon: FaGithub, url: 'https://github.com/yourusername', label: 'GitHub' },
-    { icon: FaTwitter, url: 'https://twitter.com/yourusername', label: 'Twitter' },
-    { icon: FaInstagram, url: 'https://instagram.com/yourusername', label: 'Instagram' },
-    { icon: FaEnvelope, url: 'mailto:your.email@example.com', label: 'Email' },
+    { icon: FaGithub, url: 'https://github.com/fortune-teller-blog', label: 'GitHub (fortune-teller-blog)' },
+    { icon: FaTwitter, url: 'https://twitter.com/fortune_teller_blog', label: 'Twitter (fortune_teller_blog)' },
+    { icon: FaInstagram, url: 'https://instagram.com/fortune.teller.blog', label: 'Instagram (fortune.teller.blog)' },
+    { icon: FaEnvelope, url: 'mailto:contact@fortuneteller.com', label: 'Email (contact@fortuneteller.com)' },
   ];
 
   return (
-    <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 w-full">
+      <div className="w-full px-4 md:px-8 py-12">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 md:divide-x md:divide-gray-200 dark:md:divide-gray-700">
           {/* Brand Section */}
-          <div className="space-y-4">
+          <div className="space-y-4 pb-8 md:pb-0 md:pr-8">
             <Link
               to="/"
               className="text-2xl font-bold text-purple-600 dark:text-purple-400"
@@ -44,7 +44,7 @@ const Footer = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
-                  aria-label={social.label}
+                  aria-label={`Visit our ${social.label}`}
                 >
                   <social.icon className="w-5 h-5" />
                 </a>
@@ -53,7 +53,7 @@ const Footer = () => {
           </div>
 
           {/* Quick Links */}
-          <div>
+          <div className="md:px-8 pb-8 md:pb-0">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               {t('footer.quickLinks')}
             </h3>
@@ -72,7 +72,7 @@ const Footer = () => {
           </div>
 
           {/* Categories */}
-          <div>
+          <div className="md:px-8 pb-8 md:pb-0">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               {t('footer.categories')}
             </h3>
@@ -105,7 +105,7 @@ const Footer = () => {
           </div>
 
           {/* Newsletter */}
-          <div>
+          <div className="md:pl-8">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               {t('footer.newsletter')}
             </h3>

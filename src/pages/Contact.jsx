@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
+import { Toaster, toast } from 'react-hot-toast';
 
 const Contact = () => {
   const { t } = useTranslation();
@@ -24,8 +25,10 @@ const Contact = () => {
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simulated API call
       setSubmitStatus('success');
       setFormData({ name: '', email: '', subject: '', message: '' });
+      toast.success("Thank you for your message! We'll get back to you soon.");
     } catch (error) {
       setSubmitStatus('error');
+      toast.error('Sorry, there was an error sending your message. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -39,12 +42,13 @@ const Contact = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-16">
+    <div className="w-full px-4 md:px-8 py-16">
+      <Toaster position="top-center" />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8"
+        className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 md:p-12 max-w-3xl mx-auto"
       >
         <h1 className="text-4xl font-bold text-purple-700 dark:text-purple-400 mb-6">
           Contact Us
