@@ -39,22 +39,32 @@ const PageWrapper = ({ children }) => {
   );
 };
 
+const NotFound = () => (
+  <PageWrapper>
+    <div className="text-center py-20 text-gray-500 dark:text-gray-300">
+      <h2 className="text-2xl font-bold mb-4">404 - Page Not Found</h2>
+      <p>The page you are looking for does not exist.</p>
+    </div>
+  </PageWrapper>
+);
+
 const AnimatedRoutes = () => {
   const location = useLocation();
-  
+
   return (
-    <AnimatePresence mode="wait">
-      <Suspense fallback={<Loading />}>
-        <Routes location={location} key={location.pathname}>
+    <Suspense fallback={<Loading />}>
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.key}>
           <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
           <Route path="/blog" element={<PageWrapper><Blog /></PageWrapper>} />
           <Route path="/about" element={<PageWrapper><About /></PageWrapper>} />
           <Route path="/contact" element={<PageWrapper><Contact /></PageWrapper>} />
           <Route path="/post/:slug" element={<PageWrapper><Post /></PageWrapper>} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
-      </Suspense>
-    </AnimatePresence>
+      </AnimatePresence>
+    </Suspense>
   );
 };
 
-export default AnimatedRoutes; 
+export default AnimatedRoutes;
