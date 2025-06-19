@@ -71,7 +71,7 @@ const Navbar = ({ isMenuOpen, toggleMenu }) => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-10">
+          <div className="hidden md:flex items-center space-x-6 md:space-x-10">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
@@ -86,8 +86,8 @@ const Navbar = ({ isMenuOpen, toggleMenu }) => {
               </Link>
             ))}
 
-            {/* Language Switcher */}
-            <div className="flex items-center space-x-2">
+            {/* Language Switcher (Desktop) */}
+            <div className="hidden md:flex items-center space-x-2">
               <button
                 onClick={() => i18n.changeLanguage('en')}
                 className={`px-2 py-1 rounded ${i18n.language === 'en' ? 'bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400' : 'text-gray-600 dark:text-gray-300'}`}
@@ -116,6 +116,20 @@ const Navbar = ({ isMenuOpen, toggleMenu }) => {
               >
                 🇨🇳 CN
               </button>
+            </div>
+            {/* Mobile Language Switcher (Dropdown) */}
+            <div className="md:hidden ml-2">
+              <select
+                value={i18n.language}
+                onChange={e => i18n.changeLanguage(e.target.value)}
+                className="block w-20 text-sm rounded bg-purple-50 dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-purple-200 dark:border-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                aria-label="Select language"
+              >
+                <option value="en">🇺🇸 EN</option>
+                <option value="tr">🇹🇷 TR</option>
+                <option value="ja">🇯🇵 JP</option>
+                <option value="zh">🇨🇳 CN</option>
+              </select>
             </div>
           </div>
 
@@ -151,7 +165,7 @@ const Navbar = ({ isMenuOpen, toggleMenu }) => {
                     key={link.path}
                     to={link.path}
                     onClick={toggleMenu}
-                    className={`text-sm font-medium transition-colors ${
+                    className={`text-base font-medium transition-colors ${
                       location.pathname === link.path
                         ? 'text-purple-600 dark:text-purple-400'
                         : 'text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400'
@@ -160,35 +174,19 @@ const Navbar = ({ isMenuOpen, toggleMenu }) => {
                     {link.label}
                   </Link>
                 ))}
-                <div className="flex items-center space-x-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <button
-                    onClick={() => i18n.changeLanguage('en')}
-                    className={`px-2 py-1 rounded ${i18n.language === 'en' ? 'bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400' : 'text-gray-600 dark:text-gray-300'}`}
-                    aria-label="Switch to English"
+                {/* Mobile Language Switcher (Dropdown) */}
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <select
+                    value={i18n.language}
+                    onChange={e => i18n.changeLanguage(e.target.value)}
+                    className="block w-full text-base rounded bg-purple-50 dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-purple-200 dark:border-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                    aria-label="Select language"
                   >
-                    🇺🇸 EN
-                  </button>
-                  <button
-                    onClick={() => i18n.changeLanguage('tr')}
-                    className={`px-2 py-1 rounded ${i18n.language === 'tr' ? 'bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400' : 'text-gray-600 dark:text-gray-300'}`}
-                    aria-label="Switch to Turkish"
-                  >
-                    🇹🇷 TR
-                  </button>
-                  <button
-                    onClick={() => i18n.changeLanguage('ja')}
-                    className={`px-2 py-1 rounded ${i18n.language === 'ja' ? 'bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400' : 'text-gray-600 dark:text-gray-300'}`}
-                    aria-label="Switch to Japanese"
-                  >
-                    🇯🇵 JP
-                  </button>
-                  <button
-                    onClick={() => i18n.changeLanguage('zh')}
-                    className={`px-2 py-1 rounded ${i18n.language === 'zh' ? 'bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400' : 'text-gray-600 dark:text-gray-300'}`}
-                    aria-label="Switch to Chinese"
-                  >
-                    🇨🇳 CN
-                  </button>
+                    <option value="en">🇺🇸 EN</option>
+                    <option value="tr">🇹🇷 TR</option>
+                    <option value="ja">🇯🇵 JP</option>
+                    <option value="zh">🇨🇳 CN</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -199,4 +197,4 @@ const Navbar = ({ isMenuOpen, toggleMenu }) => {
   );
 };
 
-export default Navbar; 
+export default Navbar;

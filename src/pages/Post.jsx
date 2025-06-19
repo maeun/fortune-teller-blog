@@ -58,11 +58,20 @@ function Post() {
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
   useEffect(() => {
-    const key = Object.keys(markdownFiles).find((path) =>
-      path.includes(`/posts/${lang}/${slug}.md`)
-    );
+    // 언어 우선순위: 현재 언어 → 영어 → 터키어
+    const langPriority = [lang, 'en', 'tr', 'ja', 'zh', 'ko'];
+    let foundKey = null;
+    for (const l of langPriority) {
+      const key = Object.keys(markdownFiles).find((path) =>
+        path.includes(`/posts/${l}/${slug}.md`)
+      );
+      if (key) {
+        foundKey = key;
+        break;
+      }
+    }
 
-    if (!key) {
+    if (!foundKey) {
       setContent('# 404\n\nThis post could not be found.');
       setLoading(false);
       return;
@@ -70,7 +79,7 @@ function Post() {
 
     const load = async () => {
       try {
-        const raw = await markdownFiles[key]();
+        const raw = await markdownFiles[foundKey]();
         const { content: parsed, metadata: meta } = parseMetadata(raw);
         setContent(parsed);
         setMetadata(meta);
