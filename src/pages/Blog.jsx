@@ -30,28 +30,40 @@ const Blog = () => {
   useEffect(() => {
     let isMounted = true;
     const fetchPosts = async () => {
-      const postList = [];
+      const langPriority = [lang, 'en', 'tr', 'ja', 'zh', 'ko'];
+      const allPosts = [];
       for (const path in markdownFiles) {
         // path 예시: '../posts/en/ai-and-destiny.md'
         const match = path.match(/\.\.\/posts\/(\w+)\/(.+)\.md$/);
         if (!match) continue;
         const fileLang = match[1];
         const slug = match[2];
-        if (fileLang !== lang) continue; // 현재 언어만
         try {
           const raw = await markdownFiles[path]();
           const { metadata } = parseMetadata(raw);
-          postList.push({
+          allPosts.push({
             slug,
+            lang: fileLang,
             ...metadata,
           });
         } catch (e) {
           // 무시
         }
       }
+      // 언어 우선순위에 따라 정렬 및 필터링
+      const filtered = [];
+      const usedSlugs = new Set();
+      for (const l of langPriority) {
+        allPosts.forEach((post) => {
+          if (post.lang === l && !usedSlugs.has(post.slug)) {
+            filtered.push(post);
+            usedSlugs.add(post.slug);
+          }
+        });
+      }
       // 날짜 내림차순 정렬 (metadata.date가 있을 경우)
-      postList.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-      if (isMounted) setPosts(postList);
+      filtered.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      if (isMounted) setPosts(filtered);
     };
     fetchPosts();
     return () => { isMounted = false; };
@@ -105,10 +117,10 @@ const Blog = () => {
                         )}
                       </div>
                       <h2 className="text-2xl font-semibold text-gray-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
-                        {post.title}
+                        {post.title || post.slug}
                       </h2>
                       <p className="text-gray-600 dark:text-gray-400">
-                        {post.excerpt || post.description}
+                        {post.excerpt || post.description || ''}
                       </p>
                     </div>
                   </Link>
