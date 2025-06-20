@@ -157,25 +157,25 @@ function Post() {
         )}
         <div
           className="prose prose-lg dark:prose-invert max-w-none
-            prose-headings:text-purple-100
-            prose-p:text-gray-100
-            prose-li:text-gray-100
+            prose-headings:text-white
+            prose-p:text-white
+            prose-li:text-white
             prose-strong:text-purple-200
             prose-a:text-purple-200 hover:prose-a:text-purple-100
-            prose-blockquote:text-gray-200 prose-blockquote:border-purple-700
+            prose-blockquote:text-white prose-blockquote:border-purple-700
             prose-code:bg-gray-800 prose-code:text-purple-200
-            prose-table:text-gray-100
-            prose-th:text-gray-100 prose-td:text-gray-100
+            prose-table:text-white
+            prose-th:text-white prose-td:text-white
             prose-hr:border-purple-700
-            dark:prose-headings:text-purple-100
-            dark:prose-p:text-gray-100
-            dark:prose-li:text-gray-100
+            dark:prose-headings:text-white
+            dark:prose-p:text-white
+            dark:prose-li:text-white
             dark:prose-strong:text-purple-200
             dark:prose-a:text-purple-200 dark:hover:prose-a:text-purple-100
-            dark:prose-blockquote:text-gray-200 dark:prose-blockquote:border-purple-700
+            dark:prose-blockquote:text-white dark:prose-blockquote:border-purple-700
             dark:prose-code:bg-gray-800 dark:prose-code:text-purple-200
-            dark:prose-table:text-gray-100
-            dark:prose-th:text-gray-100 dark:prose-td:text-gray-100
+            dark:prose-table:text-white
+            dark:prose-th:text-white dark:prose-td:text-white
             dark:prose-hr:border-purple-700"
           dangerouslySetInnerHTML={{ __html: marked(content) }}
         />
