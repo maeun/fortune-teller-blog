@@ -97,41 +97,30 @@ function Post() {
           className="text-center"
         >
           <div className="text-4xl mb-4">🔮</div>
-          <p className="text-gray-600 dark:text-gray-400">{t('loading')}</p>
+          <p className="text-gray-600 dark:text-gray-300 text-lg font-medium">{t('loading')}</p>
         </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 w-full">
+    <div className="min-h-screen bg-gradient-to-b from-purple-100/60 via-white to-purple-50 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 w-full flex flex-col items-center py-8 px-2 md:px-0">
+      <div className="w-full max-w-3xl">
+        <button
+          onClick={() => navigate(-1)}
+          className="mb-8 flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-purple-200 dark:border-purple-700 rounded-full shadow hover:bg-purple-100 dark:hover:bg-gray-700 text-purple-700 dark:text-purple-300 font-semibold transition-colors"
+        >
+          <FaArrowLeft /> {t('back') || 'Back'}
+        </button>
+      </div>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full px-4 md:px-8 py-16"
+        className="w-full max-w-3xl bg-white/95 dark:bg-gray-900/95 rounded-3xl shadow-2xl p-6 md:p-12 mx-auto relative"
       >
-        <button
-          onClick={() => navigate(-1)}
-          className="mb-8 text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 flex items-center gap-2 transition-colors"
-        >
-          <FaArrowLeft /> {t('back') || 'Back'}
-        </button>
-
-        <article className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 md:p-12 max-w-3xl mx-auto">
-          {metadata.title && (
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              {metadata.title}
-            </h1>
-          )}
-          
-          {metadata.description && (
-            <p className="text-xl text-gray-600 dark:text-gray-300 mb-6">
-              {metadata.description}
-            </p>
-          )}
-
-          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-8">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+          <div className="flex items-center gap-4 text-gray-500 dark:text-gray-400 text-sm flex-wrap">
             {metadata.date && (
               <span className="flex items-center gap-2">
                 <FaCalendarAlt />
@@ -148,22 +137,30 @@ function Post() {
                 {metadata.category}
               </span>
             )}
-            <button
-              onClick={() => sharePost(metadata.title, window.location.href)}
-              className="flex items-center gap-2 text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors"
-            >
-              <FaShare /> Share
-            </button>
           </div>
-
-          <div
-            className="prose dark:prose-invert max-w-none prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-600 dark:prose-p:text-gray-300 prose-a:text-purple-600 dark:prose-a:text-purple-400 hover:prose-a:text-purple-700 dark:hover:prose-a:text-purple-300"
-            dangerouslySetInnerHTML={{ __html: marked(content) }}
-          />
-        </article>
-
+          <button
+            onClick={() => sharePost(metadata.title, window.location.href)}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 dark:bg-purple-800 text-purple-700 dark:text-purple-200 font-semibold rounded-full shadow hover:bg-purple-200 dark:hover:bg-purple-700 transition-colors"
+          >
+            <FaShare /> {t('share') || 'Share'}
+          </button>
+        </div>
+        {metadata.title && (
+          <h1 className="text-3xl md:text-5xl font-extrabold text-center text-purple-800 dark:text-purple-200 mb-6 leading-tight">
+            {metadata.title}
+          </h1>
+        )}
+        {metadata.description && (
+          <p className="text-xl text-center text-gray-700 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+            {metadata.description}
+          </p>
+        )}
+        <div
+          className="prose prose-lg dark:prose-invert max-w-none prose-headings:text-purple-900 dark:prose-headings:text-purple-100 prose-p:text-gray-800 dark:prose-p:text-gray-200 prose-a:text-purple-700 dark:prose-a:text-purple-300 hover:prose-a:text-purple-900 dark:hover:prose-a:text-purple-100 prose-strong:text-purple-700 dark:prose-strong:text-purple-200 prose-blockquote:border-purple-300 dark:prose-blockquote:border-purple-700 prose-blockquote:text-gray-600 dark:prose-blockquote:text-gray-300 prose-code:bg-purple-50 dark:prose-code:bg-gray-800 prose-code:text-purple-700 dark:prose-code:text-purple-300 prose-li:marker:text-purple-400 dark:prose-li:marker:text-purple-300"
+          dangerouslySetInnerHTML={{ __html: marked(content) }}
+        />
         {/* Feedback Section */}
-        <div className="mt-8 text-center">
+        <div className="mt-12 text-center">
           {feedbackSubmitted ? (
             <p className="text-green-600 dark:text-green-400 font-medium">{t('common.thankYouForFeedback') || 'Thank you for your feedback!'}</p>
           ) : (
@@ -186,11 +183,10 @@ function Post() {
             </>
           )}
         </div>
-
         <div className="mt-12 text-center">
           <button
             onClick={() => navigate('/')}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-full shadow-lg transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-full shadow-lg transition-colors text-lg font-semibold"
           >
             <FaStar /> {t('backToHome') || 'Back to Home'}
           </button>
