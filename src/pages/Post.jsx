@@ -58,9 +58,9 @@ function Post() {
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
   useEffect(() => {
-    // lang과 slug로 정확히 매칭
+    // lang과 slug로 정확히 매칭 (경로가 정확히 끝나는지 확인)
     const key = Object.keys(markdownFiles).find((path) =>
-      path.includes(`/posts/${lang}/${slug}.md`)
+      path.endsWith(`/posts/${lang}/${slug}.md`)
     );
     if (!key) {
       setContent('# 404\n\nThis post could not be found.');
