@@ -1,3 +1,6 @@
+---
+title: Yapay Zeka Kaderi Tahmin Edebilir mi? 🔮✨
+---
 # Yapay Zeka Kaderi Tahmin Edebilir mi? 🔮✨  
 *Yapay Zeka ve Falın Kesişim Noktasını Keşfetmek*
 

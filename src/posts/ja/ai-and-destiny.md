@@ -1,4 +1,6 @@
-<!-- filepath: c:\Users\hess_kpark\side_pjt\fortune-teller-blog\src\posts\ja\ai-and-destiny.md -->
+---
+title: AIは運命を予測できるのか？🔮✨
+---
 # AIは運命を予測できるのか？🔮✨  
 *人工知能と占いの交差点を探る*
 

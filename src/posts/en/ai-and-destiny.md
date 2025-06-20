@@ -1,3 +1,6 @@
+---
+title: Can AI Predict Destiny? 🔮✨
+---
 # Can AI Predict Destiny? 🔮✨  
 *Exploring the Intersection of Artificial Intelligence and Fortune Telling*
 
