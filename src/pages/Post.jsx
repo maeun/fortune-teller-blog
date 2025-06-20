@@ -6,7 +6,8 @@ import { marked } from 'marked';
 import { motion } from 'framer-motion';
 import { FaArrowLeft, FaCalendarAlt, FaClock, FaShare, FaStar, FaTag } from 'react-icons/fa';
 
-const markdownFiles = import.meta.glob('../posts/*/*.md', { as: 'raw' });
+// glob 경로를 절대경로로 변경
+const markdownFiles = import.meta.glob('/src/posts/*/*.md', { as: 'raw' });
 
 const parseMetadata = (content) => {
   const metaMatch = content.match(/^---\n([\s\S]*?)\n---/);

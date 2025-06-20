@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaCalendarAlt, FaClock, FaTag } from 'react-icons/fa';
 
-// 모든 마크다운 파일을 동적으로 import
-const markdownFiles = import.meta.glob('../posts/*/*.md', { as: 'raw' });
+// glob 경로를 절대경로로 변경
+const markdownFiles = import.meta.glob('/src/posts/*/*.md', { as: 'raw' });
 
 // 마크다운에서 메타데이터 추출
 const parseMetadata = (content) => {
