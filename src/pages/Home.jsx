@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { FaStar, FaRegClock, FaRegCalendarAlt } from 'react-icons/fa';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
+import useFirestorePosts from '../hooks/useFirestorePosts';
 
 // 마크다운 파일 동적 import
 const markdownFiles = import.meta.glob('../posts/*/*.md', { as: 'raw' });
@@ -24,8 +25,8 @@ const parseMetadata = (content) => {
 
 const Home = () => {
   const { t, i18n } = useTranslation();
-  const [latestPosts, setLatestPosts] = useState([]);
   const lang = i18n.language;
+  const { posts: latestPosts, loading } = useFirestorePosts(lang);
 
   useEffect(() => {
     let isMounted = true;
@@ -144,8 +145,11 @@ const Home = () => {
             {t('common.latestPosts')}
           </h2>
           <div className="border-b-2 border-purple-200 dark:border-purple-700 mb-8 md:mb-12 w-24" />
+          {loading ? (
+            <div className="text-center text-gray-500 dark:text-gray-400">{t('common.loading')}</div>
+          ) : (
           <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {latestPosts.map((post, index) => (
+            {latestPosts.slice(0, 3).map((post, index) => (
               <motion.article
                 key={post.slug + '-' + post.lang}
                 initial={{ opacity: 0, y: 20 }}
@@ -188,6 +192,7 @@ const Home = () => {
               </motion.article>
             ))}
           </div>
+          )}
           <div className="flex justify-center mt-10">
             <Link
               to="/blog"

@@ -3,63 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaCalendarAlt, FaClock, FaTag } from 'react-icons/fa';
-
-// glob 경로를 상대경로로 복원
-const markdownFiles = import.meta.glob('../posts/*/*.md', { as: 'raw' });
-
-// 마크다운에서 메타데이터 추출
-const parseMetadata = (content) => {
-  const metaMatch = content.match(/^---\n([\s\S]*?)\n---/);
-  if (!metaMatch) return { content, metadata: {} };
-  const metaString = metaMatch[1];
-  const metadata = {};
-  metaString.split('\n').forEach((line) => {
-    const [key, ...rest] = line.split(':');
-    if (key && rest.length > 0) {
-      metadata[key.trim()] = rest.join(':').trim();
-    }
-  });
-  return { content: content.replace(/^---\n[\s\S]*?\n---\n/, ''), metadata };
-};
+import useFirestorePosts from '../hooks/useFirestorePosts';
 
 const Blog = () => {
   const { t, i18n } = useTranslation();
-  const [posts, setPosts] = useState([]);
   const lang = i18n.language;
-
-  useEffect(() => {
-    let isMounted = true;
-    const fetchPosts = async () => {
-      const allPosts = [];
-      for (const path in markdownFiles) {
-        const match = path.match(/\.\.\/posts\/(\w+)\/(.+)\.md$/);
-        if (!match) continue;
-        const fileLang = match[1];
-        const slug = match[2];
-        if (fileLang !== lang) continue; // 현재 언어만
-        try {
-          const raw = await markdownFiles[path]();
-          const { metadata } = parseMetadata(raw);
-          allPosts.push({
-            slug,
-            lang: fileLang,
-            ...metadata,
-          });
-        } catch (e) {
-          // 무시
-        }
-      }
-      // 날짜 내림차순 정렬 (metadata.date가 있을 경우)
-      allPosts.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-      if (isMounted) {
-        setPosts(allPosts);
-        // 디버깅: 실제 posts 배열 출력
-        console.log('Blog posts:', allPosts);
-      }
-    };
-    fetchPosts();
-    return () => { isMounted = false; };
-  }, [lang]);
+  const { posts, loading } = useFirestorePosts(lang);
 
   return (
     <div className="w-full px-4 md:px-8 py-16">
@@ -75,7 +24,9 @@ const Blog = () => {
           </h1>
 
           <div className="grid gap-8">
-            {posts.length === 0 ? (
+            {loading ? (
+              <div className="text-center text-gray-500 dark:text-gray-400">{t('common.loading')}</div>
+            ) : posts.length === 0 ? (
               <div className="text-center text-gray-500 dark:text-gray-400">{t('common.noResults') || 'No posts found.'}</div>
             ) : (
               posts.map((post, index) => (
