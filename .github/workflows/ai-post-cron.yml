@@ -25,4 +25,4 @@ jobs:
       - name: Run AI Post Generator
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/key.json
-        run: node scripts/generateAIPost.js
+        run: node scripts/generateAIPost.cjs
