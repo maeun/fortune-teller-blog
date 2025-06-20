@@ -156,7 +156,27 @@ function Post() {
           </p>
         )}
         <div
-          className="prose prose-lg dark:prose-invert max-w-none prose-headings:text-purple-900 dark:prose-headings:text-purple-100 prose-p:text-gray-800 dark:prose-p:text-gray-200 prose-a:text-purple-700 dark:prose-a:text-purple-300 hover:prose-a:text-purple-900 dark:hover:prose-a:text-purple-100 prose-strong:text-purple-700 dark:prose-strong:text-purple-200 prose-blockquote:border-purple-300 dark:prose-blockquote:border-purple-700 prose-blockquote:text-gray-600 dark:prose-blockquote:text-gray-300 prose-code:bg-purple-50 dark:prose-code:bg-gray-800 prose-code:text-purple-700 dark:prose-code:text-purple-300 prose-li:marker:text-purple-400 dark:prose-li:marker:text-purple-300"
+          className="prose prose-lg dark:prose-invert max-w-none
+            prose-headings:text-purple-100
+            prose-p:text-gray-100
+            prose-li:text-gray-100
+            prose-strong:text-purple-200
+            prose-a:text-purple-200 hover:prose-a:text-purple-100
+            prose-blockquote:text-gray-200 prose-blockquote:border-purple-700
+            prose-code:bg-gray-800 prose-code:text-purple-200
+            prose-table:text-gray-100
+            prose-th:text-gray-100 prose-td:text-gray-100
+            prose-hr:border-purple-700
+            dark:prose-headings:text-purple-100
+            dark:prose-p:text-gray-100
+            dark:prose-li:text-gray-100
+            dark:prose-strong:text-purple-200
+            dark:prose-a:text-purple-200 dark:hover:prose-a:text-purple-100
+            dark:prose-blockquote:text-gray-200 dark:prose-blockquote:border-purple-700
+            dark:prose-code:bg-gray-800 dark:prose-code:text-purple-200
+            dark:prose-table:text-gray-100
+            dark:prose-th:text-gray-100 dark:prose-td:text-gray-100
+            dark:prose-hr:border-purple-700"
           dangerouslySetInnerHTML={{ __html: marked(content) }}
         />
         {/* Feedback Section */}
