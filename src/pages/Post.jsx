@@ -47,7 +47,7 @@ const sharePost = async (title, url) => {
 
 function Post() {
   const { lang: urlLang, slug } = useParams();
-  const { t } = useTranslation();
+  const { i18n, t } = useTranslation();
   const navigate = useNavigate();
   const lang = urlLang;
 
@@ -57,6 +57,20 @@ function Post() {
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState(null);
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+
+  // 언어 변경 시 URL도 동기화
+  useEffect(() => {
+    if (i18n.language !== lang) {
+      // 해당 언어/slug 파일이 있으면 이동
+      const key = Object.keys(markdownFiles).find((path) =>
+        path.includes(`/posts/${i18n.language}/${slug}.md`)
+      );
+      if (key) {
+        navigate(`/post/${i18n.language}/${slug}`, { replace: true });
+        return;
+      }
+    }
+  }, [i18n.language, lang, slug, navigate]);
 
   useEffect(() => {
     // 디버깅: 현재 lang, slug, 모든 key 출력
