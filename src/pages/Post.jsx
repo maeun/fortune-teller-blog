@@ -156,27 +156,7 @@ function Post() {
           </p>
         )}
         <div
-          className="prose prose-lg dark:prose-invert max-w-none
-            prose-headings:text-white
-            prose-p:text-white
-            prose-li:text-white
-            prose-strong:text-purple-200
-            prose-a:text-purple-200 hover:prose-a:text-purple-100
-            prose-blockquote:text-white prose-blockquote:border-purple-700
-            prose-code:bg-gray-800 prose-code:text-purple-200
-            prose-table:text-white
-            prose-th:text-white prose-td:text-white
-            prose-hr:border-purple-700
-            dark:prose-headings:text-white
-            dark:prose-p:text-white
-            dark:prose-li:text-white
-            dark:prose-strong:text-purple-200
-            dark:prose-a:text-purple-200 dark:hover:prose-a:text-purple-100
-            dark:prose-blockquote:text-white dark:prose-blockquote:border-purple-700
-            dark:prose-code:bg-gray-800 dark:prose-code:text-purple-200
-            dark:prose-table:text-white
-            dark:prose-th:text-white dark:prose-td:text-white
-            dark:prose-hr:border-purple-700"
+          className="text-white text-lg leading-relaxed break-words [&_h1]:text-3xl [&_h2]:text-2xl [&_h3]:text-xl [&_strong]:text-purple-200 [&_a]:text-purple-300 hover:[&_a]:text-purple-100 [&_blockquote]:border-l-4 [&_blockquote]:border-purple-700 [&_blockquote]:pl-4 [&_blockquote]:text-white [&_code]:bg-gray-800 [&_code]:text-purple-200 [&_ul]:list-disc [&_ol]:list-decimal [&_li]:ml-6"
           dangerouslySetInnerHTML={{ __html: marked(content) }}
         />
         {/* Feedback Section */}
