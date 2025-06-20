@@ -171,11 +171,11 @@ function Post() {
         )}
         <div
           className="text-white text-lg leading-relaxed break-words
-            [&_h1]:text-3xl [&_h1]:font-extrabold [&_h1]:mb-6
-            [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-4
-            [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-3
-            [&_p]:mb-5 [&_ul]:mb-5 [&_ol]:mb-5
-            [&_li]:ml-6 [&_li]:mb-2
+            [&_h1]:text-3xl [&_h1]:font-extrabold [&_h1]:mb-6 [&_h1]:text-center
+            [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-4 [&_h2]:text-center
+            [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-3 [&_h3]:text-center
+            [&_p]:mb-5 [&_p]:text-left [&_ul]:mb-5 [&_ol]:mb-5
+            [&_li]:ml-6 [&_li]:mb-2 [&_li]:text-left
             [&_strong]:text-purple-200
             [&_a]:text-purple-300 hover:[&_a]:text-purple-100 no-underline
             [&_blockquote]:border-l-4 [&_blockquote]:border-purple-700 [&_blockquote]:pl-4 [&_blockquote]:text-white [&_blockquote]:italic [&_blockquote]:mb-5
