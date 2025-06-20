@@ -1,41 +1,62 @@
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaCalendarAlt, FaClock, FaTag } from 'react-icons/fa';
 
-const posts = [
-  {
-    id: 1,
-    title: '2025 New Year Fortune Reading Guide',
-    excerpt: 'Discover your path for 2025 with our comprehensive guide to free fortune telling services, including tarot readings, horoscopes, and dream interpretations.',
-    category: 'Horoscope',
-    date: 'January 1, 2025',
-    readTime: '5 min read',
-    image: '/images/blog/horoscope.jpg'
-  },
-  {
-    id: 2,
-    title: 'Daily Tarot Reading: Your Path to Clarity',
-    excerpt: 'Explore your daily guidance through tarot card readings. Learn how to interpret the cards and gain insights into your day ahead.',
-    category: 'Tarot',
-    date: 'January 2, 2025',
-    readTime: '4 min read',
-    image: '/images/blog/tarot.jpg'
-  },
-  {
-    id: 3,
-    title: 'Understanding Your Dreams: A Complete Guide',
-    excerpt: 'Dive deep into the world of dream interpretation. Learn how to decode the symbols in your dreams and understand your subconscious mind.',
-    category: 'Dream Interpretation',
-    date: 'January 3, 2025',
-    readTime: '6 min read',
-    image: '/images/blog/dreams.jpg'
-  },
-];
+// 모든 마크다운 파일을 동적으로 import
+const markdownFiles = import.meta.glob('../posts/*/*.md', { as: 'raw' });
+
+// 마크다운에서 메타데이터 추출
+const parseMetadata = (content) => {
+  const metaMatch = content.match(/^---\n([\s\S]*?)\n---/);
+  if (!metaMatch) return { content, metadata: {} };
+  const metaString = metaMatch[1];
+  const metadata = {};
+  metaString.split('\n').forEach((line) => {
+    const [key, ...rest] = line.split(':');
+    if (key && rest.length > 0) {
+      metadata[key.trim()] = rest.join(':').trim();
+    }
+  });
+  return { content: content.replace(/^---\n[\s\S]*?\n---\n/, ''), metadata };
+};
 
 const Blog = () => {
-  const { t } = useTranslation();
-  
+  const { t, i18n } = useTranslation();
+  const [posts, setPosts] = useState([]);
+  const lang = i18n.language;
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchPosts = async () => {
+      const postList = [];
+      for (const path in markdownFiles) {
+        // path 예시: '../posts/en/ai-and-destiny.md'
+        const match = path.match(/\.\.\/posts\/(\w+)\/(.+)\.md$/);
+        if (!match) continue;
+        const fileLang = match[1];
+        const slug = match[2];
+        if (fileLang !== lang) continue; // 현재 언어만
+        try {
+          const raw = await markdownFiles[path]();
+          const { metadata } = parseMetadata(raw);
+          postList.push({
+            slug,
+            ...metadata,
+          });
+        } catch (e) {
+          // 무시
+        }
+      }
+      // 날짜 내림차순 정렬 (metadata.date가 있을 경우)
+      postList.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      if (isMounted) setPosts(postList);
+    };
+    fetchPosts();
+    return () => { isMounted = false; };
+  }, [lang]);
+
   return (
     <div className="w-full px-4 md:px-8 py-16">
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 md:p-12 max-w-4xl mx-auto">
@@ -50,45 +71,50 @@ const Blog = () => {
           </h1>
 
           <div className="grid gap-8">
-            {posts.map((post, index) => (
-              <motion.article
-                key={post.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="border-b border-gray-200 dark:border-gray-700 pb-8 last:border-b-0 last:pb-0"
-              >
-                <Link to={`/post/${post.id}`} className="block group">
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div className="relative aspect-video overflow-hidden rounded-lg">
-                      <img
-                        src={post.image}
-                        alt={post.title}
-                        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
+            {posts.length === 0 ? (
+              <div className="text-center text-gray-500 dark:text-gray-400">{t('common.noResults') || 'No posts found.'}</div>
+            ) : (
+              posts.map((post, index) => (
+                <motion.article
+                  key={post.slug}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="border-b border-gray-200 dark:border-gray-700 pb-8 last:border-b-0 last:pb-0"
+                >
+                  <Link to={`/post/${post.slug}`} className="block group">
                     <div className="space-y-4">
                       <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
-                        <span className="flex items-center">
-                          <FaCalendarAlt className="mr-2" />
-                          {post.date}
-                        </span>
-                        <span className="flex items-center">
-                          <FaClock className="mr-2" />
-                          {post.readTime}
-                        </span>
+                        {post.date && (
+                          <span className="flex items-center">
+                            <FaCalendarAlt className="mr-2" />
+                            {post.date}
+                          </span>
+                        )}
+                        {post.readTime && (
+                          <span className="flex items-center">
+                            <FaClock className="mr-2" />
+                            {post.readTime}
+                          </span>
+                        )}
+                        {post.category && (
+                          <span className="flex items-center">
+                            <FaTag className="mr-2" />
+                            {post.category}
+                          </span>
+                        )}
                       </div>
                       <h2 className="text-2xl font-semibold text-gray-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
                         {post.title}
                       </h2>
                       <p className="text-gray-600 dark:text-gray-400">
-                        {post.excerpt}
+                        {post.excerpt || post.description}
                       </p>
                     </div>
-                  </div>
-                </Link>
-              </motion.article>
-            ))}
+                  </Link>
+                </motion.article>
+              ))
+            )}
           </div>
         </motion.div>
       </div>
@@ -96,4 +122,4 @@ const Blog = () => {
   );
 };
 
-export default Blog; 
+export default Blog;
