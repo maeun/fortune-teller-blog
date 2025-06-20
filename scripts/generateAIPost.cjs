@@ -1,6 +1,6 @@
 // Node.js: OpenAI API로 오늘의 운세 포스트 생성 후 Firestore에 업로드
 require('dotenv').config();
-const { Configuration, OpenAIApi } = require('openai');
+const OpenAI = require('openai');
 const { initializeApp, applicationDefault } = require('firebase-admin/app');
 const { getFirestore } = require('firebase-admin/firestore');
 
@@ -8,8 +8,7 @@ const { getFirestore } = require('firebase-admin/firestore');
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const FIREBASE_PROJECT_ID = process.env.FIREBASE_PROJECT_ID;
 
-const configuration = new Configuration({ apiKey: OPENAI_API_KEY });
-const openai = new OpenAIApi(configuration);
+const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 
 initializeApp({
   credential: applicationDefault(),
@@ -27,14 +26,14 @@ async function generateFortune(lang = 'ko') {
     zh: '请用200字以内的亲切语气写一篇今日运势，并加上标题。'
   };
   const prompt = prompts[lang] || prompts['ko'];
-  const res = await openai.createChatCompletion({
+  const res = await openai.chat.completions.create({
     model: 'gpt-3.5-turbo',
     messages: [
       { role: 'system', content: 'You are a fortune-telling AI assistant.' },
       { role: 'user', content: prompt }
     ]
   });
-  const text = res.data.choices[0].message.content.trim();
+  const text = res.choices[0].message.content.trim();
   // 제목/본문 분리 (제목은 첫 줄, 나머지는 본문)
   const [title, ...bodyArr] = text.split('\n');
   const content = bodyArr.join('\n').replace(/^\s*-\s*/, '');
