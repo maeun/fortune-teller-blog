@@ -58,10 +58,14 @@ function Post() {
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
   useEffect(() => {
+    // 디버깅: 현재 lang, slug, 모든 key 출력
+    console.log('Post page params:', { lang, slug });
+    console.log('Available markdown keys:', Object.keys(markdownFiles));
     // lang과 slug로 정확히 매칭 (경로가 정확히 끝나는지 확인)
     const key = Object.keys(markdownFiles).find((path) =>
       path.endsWith(`/posts/${lang}/${slug}.md`)
     );
+    console.log('Matched key:', key);
     if (!key) {
       setContent('# 404\n\nThis post could not be found.');
       setLoading(false);

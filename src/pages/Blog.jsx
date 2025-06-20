@@ -51,7 +51,11 @@ const Blog = () => {
       }
       // 날짜 내림차순 정렬 (metadata.date가 있을 경우)
       allPosts.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-      if (isMounted) setPosts(allPosts);
+      if (isMounted) {
+        setPosts(allPosts);
+        // 디버깅: 실제 posts 배열 출력
+        console.log('Blog posts:', allPosts);
+      }
     };
     fetchPosts();
     return () => { isMounted = false; };
