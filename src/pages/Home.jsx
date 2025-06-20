@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
@@ -5,38 +6,54 @@ import { FaStar, FaRegClock, FaRegCalendarAlt } from 'react-icons/fa';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 
-const posts = [
-  {
-    id: 1,
-    title: 'Understanding Your Daily Horoscope',
-    excerpt: 'Learn how to interpret your daily horoscope and use it to guide your decisions.',
-    category: 'Horoscope',
-    date: '2024-03-20',
-    readTime: '5 min read',
-    image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&auto=format&fit=crop&q=60',
-  },
-  {
-    id: 2,
-    title: 'Tarot Card Reading Guide for Beginners',
-    excerpt: 'A comprehensive guide to understanding and reading tarot cards for beginners.',
-    category: 'Tarot',
-    date: '2024-03-19',
-    readTime: '8 min read',
-    image: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=800&auto=format&fit=crop&q=60',
-  },
-  {
-    id: 3,
-    title: 'Dream Interpretation: Common Symbols',
-    excerpt: 'Discover the meaning behind common dream symbols and what they reveal about your subconscious.',
-    category: 'Dreams',
-    date: '2024-03-18',
-    readTime: '6 min read',
-    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&auto=format&fit=crop&q=60',
-  },
-];
+// 마크다운 파일 동적 import
+const markdownFiles = import.meta.glob('../posts/*/*.md', { as: 'raw' });
+const parseMetadata = (content) => {
+  const metaMatch = content.match(/^---\n([\s\S]*?)\n---/);
+  if (!metaMatch) return { content, metadata: {} };
+  const metaString = metaMatch[1];
+  const metadata = {};
+  metaString.split('\n').forEach((line) => {
+    const [key, ...rest] = line.split(':');
+    if (key && rest.length > 0) {
+      metadata[key.trim()] = rest.join(':').trim();
+    }
+  });
+  return { content: content.replace(/^---\n[\s\S]*?\n---\n/, ''), metadata };
+};
 
 const Home = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const [latestPosts, setLatestPosts] = useState([]);
+  const lang = i18n.language;
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchPosts = async () => {
+      const allPosts = [];
+      for (const path in markdownFiles) {
+        const match = path.match(/\.\.\/posts\/(\w+)\/(.+)\.md$/);
+        if (!match) continue;
+        const fileLang = match[1];
+        const slug = match[2];
+        if (fileLang !== lang) continue;
+        try {
+          const raw = await markdownFiles[path]();
+          const { metadata } = parseMetadata(raw);
+          allPosts.push({
+            slug,
+            lang: fileLang,
+            ...metadata,
+          });
+        } catch (e) {}
+      }
+      allPosts.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      if (isMounted) setLatestPosts(allPosts.slice(0, 3));
+    };
+    fetchPosts();
+    return () => { isMounted = false; };
+  }, [lang]);
+
   const popularPostId = 1; // 예시: 첫 번째 글만 인기글로 표시
 
   return (
@@ -128,49 +145,35 @@ const Home = () => {
           </h2>
           <div className="border-b-2 border-purple-200 dark:border-purple-700 mb-8 md:mb-12 w-24" />
           <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {posts.map((post, index) => (
+            {latestPosts.map((post, index) => (
               <motion.article
-                key={post.id}
+                key={post.slug + '-' + post.lang}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.2 }}
                 className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-2xl hover:border-purple-400 dark:hover:border-purple-500 transition-all duration-200 group"
                 whileHover={{ scale: 1.03 }}
               >
-                <Link to={`/post/${post.id}`} className="block focus:outline-none focus:ring-2 focus:ring-purple-500">
-                  <div className="relative h-48">
-                    <LazyLoadImage
-                      src={post.image}
-                      alt={post.title + ' - ' + post.category}
-                      effect="blur"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                <Link to={`/post/${post.lang}/${post.slug}`} className="block focus:outline-none focus:ring-2 focus:ring-purple-500">
                   <div className="p-6">
                     <div className="flex items-center gap-4 mb-4">
-                      <span className="text-xs font-semibold text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-900 rounded px-2 py-1">
-                        {post.category}
-                      </span>
-                      <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                        <FaRegCalendarAlt />
-                        <span>{post.date}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                        <FaRegClock />
-                        <span>{post.readTime}</span>
-                      </div>
-                      {post.id === popularPostId && (
-                        <span className="flex items-center ml-auto" title="Popular Post">
-                          <FaStar className="text-yellow-400 mr-1" />
-                          <span className="text-xs text-yellow-600 dark:text-yellow-400 font-semibold">Popular</span>
+                      {post.category && (
+                        <span className="text-xs font-semibold text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-900 rounded px-2 py-1">
+                          {post.category}
                         </span>
+                      )}
+                      {post.date && (
+                        <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                          <FaRegCalendarAlt />
+                          <span>{post.date}</span>
+                        </div>
                       )}
                     </div>
                     <h3 className="text-lg font-bold mb-2 text-gray-900 dark:text-white flex items-center">
-                      {post.title}
+                      {post.title || post.slug}
                     </h3>
                     <p className="text-gray-600 dark:text-gray-300 mb-4 text-sm">
-                      {post.excerpt}
+                      {post.excerpt || post.description || ''}
                     </p>
                     <div className="flex justify-end">
                       <span
