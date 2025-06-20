@@ -88,13 +88,13 @@ const Blog = () => {
             ) : (
               posts.map((post, index) => (
                 <motion.article
-                  key={post.slug}
+                  key={post.slug + '-' + post.lang}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   className="border-b border-gray-200 dark:border-gray-700 pb-8 last:border-b-0 last:pb-0"
                 >
-                  <Link to={`/post/${post.slug}`} className="block group">
+                  <Link to={`/post/${post.lang}/${post.slug}`} className="block group">
                     <div className="space-y-4">
                       <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
                         {post.date && (

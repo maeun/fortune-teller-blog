@@ -45,10 +45,10 @@ const sharePost = async (title, url) => {
 };
 
 function Post() {
-  const { slug } = useParams();
+  const { lang: urlLang, slug } = useParams();
   const { i18n, t } = useTranslation();
   const navigate = useNavigate();
-  const lang = i18n.language;
+  const lang = urlLang || i18n.language;
 
   const [content, setContent] = useState('');
   const [metadata, setMetadata] = useState({});
@@ -58,28 +58,18 @@ function Post() {
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
   useEffect(() => {
-    // 언어 우선순위: 현재 언어 → 영어 → 터키어
-    const langPriority = [lang, 'en', 'tr', 'ja', 'zh', 'ko'];
-    let foundKey = null;
-    for (const l of langPriority) {
-      const key = Object.keys(markdownFiles).find((path) =>
-        path.includes(`/posts/${l}/${slug}.md`)
-      );
-      if (key) {
-        foundKey = key;
-        break;
-      }
-    }
-
-    if (!foundKey) {
+    // lang과 slug로 정확히 매칭
+    const key = Object.keys(markdownFiles).find((path) =>
+      path.includes(`/posts/${lang}/${slug}.md`)
+    );
+    if (!key) {
       setContent('# 404\n\nThis post could not be found.');
       setLoading(false);
       return;
     }
-
     const load = async () => {
       try {
-        const raw = await markdownFiles[foundKey]();
+        const raw = await markdownFiles[key]();
         const { content: parsed, metadata: meta } = parseMetadata(raw);
         setContent(parsed);
         setMetadata(meta);
@@ -90,7 +80,6 @@ function Post() {
         setLoading(false);
       }
     };
-
     load();
   }, [lang, slug]);
 
