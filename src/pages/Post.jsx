@@ -177,12 +177,11 @@ function Post() {
             [&_p]:mb-5 [&_ul]:mb-5 [&_ol]:mb-5
             [&_li]:ml-6 [&_li]:mb-2
             [&_strong]:text-purple-200
-            [&_a]:text-purple-300 hover:[&_a]:text-purple-100 underline
+            [&_a]:text-purple-300 hover:[&_a]:text-purple-100 no-underline
             [&_blockquote]:border-l-4 [&_blockquote]:border-purple-700 [&_blockquote]:pl-4 [&_blockquote]:text-white [&_blockquote]:italic [&_blockquote]:mb-5
             [&_code]:bg-gray-800 [&_code]:text-purple-200 [&_code]:px-2 [&_code]:py-1 [&_code]:rounded
             [&_pre]:bg-gray-900 [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:overflow-x-auto
-            [&_hr]:my-8 [&_hr]:border-purple-700
-            "
+            [&_hr]:my-8 [&_hr]:border-purple-700"
           dangerouslySetInnerHTML={{ __html: marked(content) }}
         />
         {/* Feedback Section */}
