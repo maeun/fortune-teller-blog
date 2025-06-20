@@ -131,7 +131,7 @@ function Post() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-3xl bg-white/95 dark:bg-gray-900/95 rounded-3xl shadow-2xl p-6 md:p-12 mx-auto relative"
+        className="w-full max-w-3xl bg-white/90 dark:bg-gray-900/90 rounded-3xl shadow-2xl p-4 md:p-10 mx-auto relative border border-purple-100 dark:border-purple-800"
       >
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <div className="flex items-center gap-4 text-gray-500 dark:text-gray-400 text-sm flex-wrap">
@@ -170,7 +170,19 @@ function Post() {
           </p>
         )}
         <div
-          className="text-white text-lg leading-relaxed break-words [&_h1]:text-3xl [&_h2]:text-2xl [&_h3]:text-xl [&_strong]:text-purple-200 [&_a]:text-purple-300 hover:[&_a]:text-purple-100 [&_blockquote]:border-l-4 [&_blockquote]:border-purple-700 [&_blockquote]:pl-4 [&_blockquote]:text-white [&_code]:bg-gray-800 [&_code]:text-purple-200 [&_ul]:list-disc [&_ol]:list-decimal [&_li]:ml-6"
+          className="text-white text-lg leading-relaxed break-words
+            [&_h1]:text-3xl [&_h1]:font-extrabold [&_h1]:mb-6
+            [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-4
+            [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-3
+            [&_p]:mb-5 [&_ul]:mb-5 [&_ol]:mb-5
+            [&_li]:ml-6 [&_li]:mb-2
+            [&_strong]:text-purple-200
+            [&_a]:text-purple-300 hover:[&_a]:text-purple-100 underline
+            [&_blockquote]:border-l-4 [&_blockquote]:border-purple-700 [&_blockquote]:pl-4 [&_blockquote]:text-white [&_blockquote]:italic [&_blockquote]:mb-5
+            [&_code]:bg-gray-800 [&_code]:text-purple-200 [&_code]:px-2 [&_code]:py-1 [&_code]:rounded
+            [&_pre]:bg-gray-900 [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:overflow-x-auto
+            [&_hr]:my-8 [&_hr]:border-purple-700
+            "
           dangerouslySetInnerHTML={{ __html: marked(content) }}
         />
         {/* Feedback Section */}
