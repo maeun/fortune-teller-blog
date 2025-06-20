@@ -46,9 +46,9 @@ const sharePost = async (title, url) => {
 
 function Post() {
   const { lang: urlLang, slug } = useParams();
-  const { i18n, t } = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
-  const lang = urlLang || i18n.language;
+  const lang = urlLang;
 
   const [content, setContent] = useState('');
   const [metadata, setMetadata] = useState({});
