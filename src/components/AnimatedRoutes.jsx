@@ -59,6 +59,7 @@ const AnimatedRoutes = () => {
           <Route path="/blog" element={<PageWrapper><Blog /></PageWrapper>} />
           <Route path="/about" element={<PageWrapper><About /></PageWrapper>} />
           <Route path="/contact" element={<PageWrapper><Contact /></PageWrapper>} />
+          <Route path="/post/:lang/:slug" element={<PageWrapper><Post /></PageWrapper>} />
           <Route path="/post/:slug" element={<PageWrapper><Post /></PageWrapper>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
