@@ -1,13 +1,23 @@
 // src/pages/Post.jsx
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { marked } from 'marked';
-import { motion } from 'framer-motion';
-import { FaArrowLeft, FaCalendarAlt, FaClock, FaShare, FaStar, FaTag } from 'react-icons/fa';
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { marked } from "marked";
+import { motion } from "framer-motion";
+import {
+  FaArrowLeft,
+  FaCalendarAlt,
+  FaClock,
+  FaShare,
+  FaStar,
+  FaTag,
+} from "react-icons/fa";
 
 // glob 경로를 상대경로로 복원
-const markdownFiles = import.meta.glob('../posts/*/*.md', { as: 'raw' });
+const markdownFiles = import.meta.glob("../posts/*/*.md", {
+  query: "?raw",
+  import: "default",
+});
 
 const parseMetadata = (content) => {
   const metaMatch = content.match(/^---\n([\s\S]*?)\n---/);
@@ -16,14 +26,14 @@ const parseMetadata = (content) => {
   const metaString = metaMatch[1];
   const metadata = {};
 
-  metaString.split('\n').forEach((line) => {
-    const [key, ...rest] = line.split(':');
+  metaString.split("\n").forEach((line) => {
+    const [key, ...rest] = line.split(":");
     if (key && rest.length > 0) {
-      metadata[key.trim()] = rest.join(':').trim();
+      metadata[key.trim()] = rest.join(":").trim();
     }
   });
 
-  const mainContent = content.replace(/^---\n[\s\S]*?\n---\n/, '');
+  const mainContent = content.replace(/^---\n[\s\S]*?\n---\n/, "");
   return { content: mainContent, metadata };
 };
 
@@ -37,11 +47,11 @@ const sharePost = async (title, url) => {
     try {
       await navigator.share({ title, url });
     } catch (err) {
-      console.log('Share error:', err);
+      console.log("Share error:", err);
     }
   } else {
     navigator.clipboard.writeText(url);
-    alert('Link copied to clipboard!');
+    alert("Link copied to clipboard!");
   }
 };
 
@@ -51,7 +61,7 @@ function Post() {
   const navigate = useNavigate();
   const lang = urlLang;
 
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState("");
   const [metadata, setMetadata] = useState({});
   const [readingTime, setReadingTime] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -74,15 +84,15 @@ function Post() {
 
   useEffect(() => {
     // 디버깅: 현재 lang, slug, 모든 key 출력
-    console.log('Post page params:', { lang, slug });
-    console.log('Available markdown keys:', Object.keys(markdownFiles));
+    console.log("Post page params:", { lang, slug });
+    console.log("Available markdown keys:", Object.keys(markdownFiles));
     // lang과 slug로 정확히 매칭 (경로가 정확히 끝나는지 확인)
     const key = Object.keys(markdownFiles).find((path) =>
       path.endsWith(`/posts/${lang}/${slug}.md`)
     );
-    console.log('Matched key:', key);
+    console.log("Matched key:", key);
     if (!key) {
-      setContent('# 404\n\nThis post could not be found.');
+      setContent("# 404\n\nThis post could not be found.");
       setLoading(false);
       return;
     }
@@ -94,7 +104,7 @@ function Post() {
         setMetadata(meta);
         setReadingTime(calculateReadingTime(parsed));
       } catch (e) {
-        setContent('# Error\n\nFailed to load content.');
+        setContent("# Error\n\nFailed to load content.");
       } finally {
         setLoading(false);
       }
@@ -111,7 +121,9 @@ function Post() {
           className="text-center"
         >
           <div className="text-4xl mb-4">🔮</div>
-          <p className="text-gray-600 dark:text-gray-300 text-lg font-medium">{t('loading')}</p>
+          <p className="text-gray-600 dark:text-gray-300 text-lg font-medium">
+            {t("loading")}
+          </p>
         </motion.div>
       </div>
     );
@@ -124,7 +136,7 @@ function Post() {
           onClick={() => navigate(-1)}
           className="mb-8 flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-purple-200 dark:border-purple-700 rounded-full shadow hover:bg-purple-100 dark:hover:bg-gray-700 text-purple-700 dark:text-purple-300 font-semibold transition-colors"
         >
-          <FaArrowLeft /> {t('back') || 'Back'}
+          <FaArrowLeft /> {t("back") || "Back"}
         </button>
       </div>
       <motion.div
@@ -156,7 +168,7 @@ function Post() {
             onClick={() => sharePost(metadata.title, window.location.href)}
             className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 dark:bg-purple-800 text-purple-700 dark:text-purple-200 font-semibold rounded-full shadow hover:bg-purple-200 dark:hover:bg-purple-700 transition-colors"
           >
-            <FaShare /> {t('share') || 'Share'}
+            <FaShare /> {t("share") || "Share"}
           </button>
         </div>
         {metadata.title && (
@@ -187,33 +199,44 @@ function Post() {
         {/* Feedback Section */}
         <div className="mt-12 text-center">
           {feedbackSubmitted ? (
-            <p className="text-green-600 dark:text-green-400 font-medium">{t('common.thankYouForFeedback') || 'Thank you for your feedback!'}</p>
+            <p className="text-green-600 dark:text-green-400 font-medium">
+              {t("common.thankYouForFeedback") ||
+                "Thank you for your feedback!"}
+            </p>
           ) : (
             <>
-              <p className="mb-2 text-gray-700 dark:text-gray-300">{t('common.wasThisHelpful') || 'Was this post helpful?'}</p>
+              <p className="mb-2 text-gray-700 dark:text-gray-300">
+                {t("common.wasThisHelpful") || "Was this post helpful?"}
+              </p>
               <button
-                onClick={() => { setFeedback('yes'); setFeedbackSubmitted(true); }}
+                onClick={() => {
+                  setFeedback("yes");
+                  setFeedbackSubmitted(true);
+                }}
                 className="inline-block px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-full mr-2 transition-colors"
                 aria-label="Yes, this was helpful"
               >
-                {t('common.yes') || 'Yes'}
+                {t("common.yes") || "Yes"}
               </button>
               <button
-                onClick={() => { setFeedback('no'); setFeedbackSubmitted(true); }}
+                onClick={() => {
+                  setFeedback("no");
+                  setFeedbackSubmitted(true);
+                }}
                 className="inline-block px-5 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-full transition-colors"
                 aria-label="No, this was not helpful"
               >
-                {t('common.no') || 'No'}
+                {t("common.no") || "No"}
               </button>
             </>
           )}
         </div>
         <div className="mt-12 text-center">
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
             className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-full shadow-lg transition-colors text-lg font-semibold"
           >
-            <FaStar /> {t('backToHome') || 'Back to Home'}
+            <FaStar /> {t("backToHome") || "Back to Home"}
           </button>
         </div>
       </motion.div>
