@@ -84,27 +84,17 @@ async function buildPost({ lang, topic, date, category, emoji }) {
   let categoryTranslated = category;
   if (lang !== "en") categoryTranslated = await translateText(category, lang);
   // 키워드 생성
-  const kwPrompt = `Suggest 12 SEO-friendly keywords for a fortune-telling blog post about "${topic}" in the category "${categoryTranslated}". Respond as a comma-separated list only in ${
-    lang === "en" ? "English" : lang === "ko" ? "Korean" : "Turkish"
-  }.`;
+  const kwPrompt = `Suggest 12 SEO-friendly keywords for a fortune-telling blog post about \"${topic}\" in the category \"${categoryTranslated}\". Respond as a comma-separated list only in ${lang === "en" ? "English" : lang === "ko" ? "Korean" : "Turkish"}.`;
   const kwRes = await openai.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: [
-      {
-        role: "system",
-        content: "You are an SEO expert for fortune-telling blogs.",
-      },
+      { role: "system", content: "You are an SEO expert for fortune-telling blogs." },
       { role: "user", content: kwPrompt },
     ],
   });
-  const keywordsArr = kwRes.data.choices[0].message.content
-    .split(",")
-    .map((k) => k.trim())
-    .filter(Boolean);
-  // 본문 생성 (title, category, 홍보문구 없이, 카테고리 중심, 길고 SEO 최적화, 마크다운)
-  const bodyPrompt = `Write a long, detailed, SEO-optimized fortune-telling blog post about the topic: "${topic}" in the category "${categoryTranslated}". Do NOT include the title, category, or any promotional or call-to-action text. Focus only on the topic and category. Use markdown or HTML for formatting. Respond in ${
-    lang === "en" ? "English" : lang === "ko" ? "Korean" : "Turkish"
-  }.`;
+  const keywordsArr = kwRes.data.choices[0].message.content.split(",").map(k => k.trim()).filter(Boolean);
+  // 본문 생성 (title, category, 홍보문구, 예시, 표, 불필요한 섹션이 포함되지 않도록, 카테고리 중심, 길고 SEO 최적화, 마크다운)
+  const bodyPrompt = `Write a long, detailed, SEO-optimized fortune-telling blog post about the topic: \"${topic}\" in the category \"${categoryTranslated}\". Do NOT include the title, category, any promotional or call-to-action text, any example, any table, or any section about birthdays, zodiac, numerology, or AI. Focus ONLY on the topic and category. Use markdown or HTML for formatting. Respond in ${lang === "en" ? "English" : lang === "ko" ? "Korean" : "Turkish"}.`;
   const bodyRes = await openai.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: [
@@ -116,7 +106,7 @@ async function buildPost({ lang, topic, date, category, emoji }) {
   // 대표 이미지 생성
   const imagePrompt = `A beautiful, eye-catching illustration for a fortune-telling blog post about: ${topic} (${categoryTranslated}), mystical, magical, trending on artstation, 512x512`;
   const imageUrl = await generateImageUrl(imagePrompt, lang);
-  // 마크다운 조립
+  // 반환
   return {
     description,
     category: categoryTranslated,
