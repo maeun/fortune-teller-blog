@@ -7,58 +7,10 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import useFirestorePosts from "../hooks/useFirestorePosts";
 
-// 마크다운 파일 동적 import
-const markdownFiles = import.meta.glob("../posts/*/*.md", { as: "raw" });
-const parseMetadata = (content) => {
-  const metaMatch = content.match(/^---\n([\s\S]*?)\n---/);
-  if (!metaMatch) return { content, metadata: {} };
-  const metaString = metaMatch[1];
-  const metadata = {};
-  metaString.split("\n").forEach((line) => {
-    const [key, ...rest] = line.split(":");
-    if (key && rest.length > 0) {
-      metadata[key.trim()] = rest.join(":").trim();
-    }
-  });
-  return { content: content.replace(/^---\n[\s\S]*?\n---\n/, ""), metadata };
-};
-
 const Home = () => {
   const { t, i18n } = useTranslation();
   const lang = i18n.language;
-  const { posts: latestPostsData, loading } = useFirestorePosts(lang);
-  const [latestPosts, setLatestPosts] = useState([]);
-
-  useEffect(() => {
-    let isMounted = true;
-    const fetchPosts = async () => {
-      const allPosts = [];
-      for (const path in markdownFiles) {
-        const match = path.match(/\.\.\/posts\/(\w+)\/(.+)\.md$/);
-        if (!match) continue;
-        const fileLang = match[1];
-        const slug = match[2];
-        if (fileLang !== lang) continue;
-        try {
-          const raw = await markdownFiles[path]();
-          const { metadata } = parseMetadata(raw);
-          allPosts.push({
-            slug,
-            lang: fileLang,
-            ...metadata,
-          });
-        } catch (e) {}
-      }
-      allPosts.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
-      if (isMounted) setLatestPosts(allPosts.slice(0, 3));
-    };
-    fetchPosts();
-    return () => {
-      isMounted = false;
-    };
-  }, [lang]);
-
-  const popularPostId = 1; // 예시: 첫 번째 글만 인기글로 표시
+  const { posts: latestPosts, loading } = useFirestorePosts(lang);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -167,18 +119,22 @@ const Home = () => {
                     to={`/post/${post.lang}/${post.slug}`}
                     className="block focus:outline-none focus:ring-2 focus:ring-purple-500"
                   >
+                    {post.imageUrl && (
+                      <div className="w-full h-48 bg-gray-200 dark:bg-gray-800 flex items-center justify-center overflow-hidden">
+                        <LazyLoadImage
+                          src={post.imageUrl}
+                          alt={post.title || post.slug}
+                          effect="blur"
+                          className="object-cover w-full h-full"
+                        />
+                      </div>
+                    )}
                     <div className="p-6">
                       <div className="flex items-center gap-4 mb-4">
                         {post.category && (
                           <span className="text-xs font-semibold text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-900 rounded px-2 py-1">
                             {post.category}
                           </span>
-                        )}
-                        {post.date && (
-                          <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                            <FaRegCalendarAlt />
-                            <span>{post.date}</span>
-                          </div>
                         )}
                       </div>
                       <h3 className="text-lg font-bold mb-2 text-gray-900 dark:text-white flex items-center">

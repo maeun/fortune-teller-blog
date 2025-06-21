@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaCalendarAlt, FaClock, FaTag } from 'react-icons/fa';
+import { FaTag } from 'react-icons/fa';
 import useFirestorePosts from '../hooks/useFirestorePosts';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 const Blog = () => {
   const { t, i18n } = useTranslation();
@@ -38,20 +39,18 @@ const Blog = () => {
                   className="border-b border-gray-200 dark:border-gray-700 pb-8 last:border-b-0 last:pb-0"
                 >
                   <Link to={`/post/${post.lang}/${post.slug}`} className="block group">
+                    {post.imageUrl && (
+                      <div className="w-full h-48 bg-gray-200 dark:bg-gray-800 flex items-center justify-center overflow-hidden mb-4 rounded-lg">
+                        <LazyLoadImage
+                          src={post.imageUrl}
+                          alt={post.title || post.slug}
+                          effect="blur"
+                          className="object-cover w-full h-full"
+                        />
+                      </div>
+                    )}
                     <div className="space-y-4">
                       <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
-                        {post.date && (
-                          <span className="flex items-center">
-                            <FaCalendarAlt className="mr-2" />
-                            {post.date}
-                          </span>
-                        )}
-                        {post.readTime && (
-                          <span className="flex items-center">
-                            <FaClock className="mr-2" />
-                            {post.readTime}
-                          </span>
-                        )}
                         {post.category && (
                           <span className="flex items-center">
                             <FaTag className="mr-2" />
