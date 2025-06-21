@@ -23,6 +23,8 @@ async function translateText(text, targetLang) {
   const prompt = {
     ko: `Translate the following text to Korean:\n${text}`,
     tr: `Translate the following text to Turkish:\n${text}`,
+    zh: `Translate the following text to Chinese:\n${text}`,
+    ja: `Translate the following text to Japanese:\n${text}`,
   };
   const res = await openai.chat.completions.create({
     model: "gpt-3.5-turbo",
@@ -74,12 +76,18 @@ function cleanContent(content) {
   content = content.replace(/^#+\s.*$/gm, "");
   content = content.replace(/<h[1-6][^>]*>.*?<\/h[1-6]>/gi, "");
   // Remove lines starting with title, category, keywords, description, date, slug, etc.
-  content = content.replace(/^(title|category|keywords?|description|date|slug)\s*[:：].*$/gim, "");
+  content = content.replace(
+    /^(title|category|keywords?|description|date|slug)\s*[:：].*$/gim,
+    ""
+  );
   // Remove markdown/html tables
   content = content.replace(/\|[^\n]*\|/g, "");
   content = content.replace(/<table[\s\S]*?<\/table>/gi, "");
   // Remove example, CTA, promotional, astrology, numerology, AI, link, etc. sections (including Turkish/Korean)
-  content = content.replace(/(예시|example|call to action|cta|홍보문구|astrology|numerology|AI|인공지능|키워드|keywords?|링크|link|frontmatter|yaml|표|table|zodiac|birth ?date|생년월일|생일|수비학|점성술|태어난 날|AI fortune|AI-powered|https?:\/\/\S+|\[.*?\]\(.*?\)|SEO-Friendly Keywords|SEO keywords|SEO 키워드|SEO\s*:)/gim, "");
+  content = content.replace(
+    /(예시|example|call to action|cta|홍보문구|astrology|numerology|AI|인공지능|키워드|keywords?|링크|link|frontmatter|yaml|표|table|zodiac|birth ?date|생년월일|생일|수비학|점성술|태어난 날|AI fortune|AI-powered|https?:\/\/\S+|\[.*?\]\(.*?\)|SEO-Friendly Keywords|SEO keywords|SEO 키워드|SEO\s*:)/gim,
+    ""
+  );
   // Remove blockquotes, images, and any remaining markdown artifacts
   content = content.replace(/^>.*$/gm, "");
   content = content.replace(/!\[.*?\]\(.*?\)/g, "");
@@ -93,7 +101,15 @@ function cleanContent(content) {
 async function buildPost({ lang, topic, date, category, emoji }) {
   // 설명 생성
   const descPrompt = `Write a one-sentence description for a fortune-telling blog post titled: "${topic}". Respond in ${
-    lang === "en" ? "English" : lang === "ko" ? "Korean" : "Turkish"
+    lang === "en"
+      ? "English"
+      : lang === "ko"
+      ? "Korean"
+      : lang === "tr"
+      ? "Turkish"
+      : lang === "zh"
+      ? "Chinese"
+      : "Japanese"
   }.`;
   const descRes = await openai.chat.completions.create({
     model: "gpt-3.5-turbo",
@@ -108,7 +124,15 @@ async function buildPost({ lang, topic, date, category, emoji }) {
   if (lang !== "en") categoryTranslated = await translateText(category, lang);
   // 키워드 생성
   const kwPrompt = `Suggest 12 SEO-friendly keywords for a fortune-telling blog post about \"${topic}\" in the category \"${categoryTranslated}\". Respond as a comma-separated list only in ${
-    lang === "en" ? "English" : lang === "ko" ? "Korean" : "Turkish"
+    lang === "en"
+      ? "English"
+      : lang === "ko"
+      ? "Korean"
+      : lang === "tr"
+      ? "Turkish"
+      : lang === "zh"
+      ? "Chinese"
+      : "Japanese"
   }.`;
   const kwRes = await openai.chat.completions.create({
     model: "gpt-3.5-turbo",
@@ -125,9 +149,7 @@ async function buildPost({ lang, topic, date, category, emoji }) {
     .map((k) => k.trim())
     .filter(Boolean);
   // 본문 생성 (불필요한 섹션, 헤더, 표, 예시, 홍보문구, AI, astrology, numerology, CTA, 링크, 키워드, description, title, category 등 완전 금지)
-  const bodyPrompt = `Write a long, detailed, SEO-optimized fortune-telling blog post about the topic: "${topic}" in the category "${categoryTranslated}". The content MUST NOT include any of the following: title, category, description, keywords, any promotional or call-to-action text, any example, any table, any markdown header, any YAML frontmatter, any section or mention about birthdays, zodiac, astrology, numerology, AI, links, or SEO keywords. Focus ONLY on the topic and category. Write only the main body content, as if it is a single, uninterrupted article. Respond in ${
-    lang === "en" ? "English" : lang === "ko" ? "Korean" : "Turkish"
-  }.`;
+  const bodyPrompt = `Write a long, detailed, SEO-optimized fortune-telling blog post about the topic: "${topic}" in the category "${categoryTranslated}". The content MUST NOT include any of the following: title, category, description, keywords, any promotional or call-to-action text, any example, any table, any markdown header, any YAML frontmatter, any section or mention about birthdays, zodiac, astrology, numerology, AI, links, or SEO keywords. Focus ONLY on the topic and category. Write only the main body content, as if it is a single, uninterrupted article. Respond ONLY as clean HTML (no markdown, no headers, no metadata, no frontmatter, no title, no category, no keywords, no description, no links, no CTA, no SEO keywords, no astrology, no numerology, no AI, no YAML).`;
   const bodyRes = await openai.chat.completions.create({
     model: "gpt-3.5-turbo",
     messages: [
@@ -158,14 +180,28 @@ async function uploadFortunePost() {
     .toISOString()
     .replace(/[-:T.]/g, "")
     .slice(0, 12)}`;
-  const langs = ["en", "ko", "tr"];
+  const langs = ["en", "tr", "zh", "ja", "ko"];
   // 1. 영어로 fortune-telling 주제 1개 생성
   const topicEn = await getRandomFortuneTopicEn();
   // 2. 각 언어별로 주제 번역
-  const topicKo = await translateText(topicEn, "ko");
   const topicTr = await translateText(topicEn, "tr");
-  const topics = { en: topicEn, ko: topicKo, tr: topicTr };
-  const categories = { en: "Fortune-telling", ko: "운세", tr: "Fal" };
+  const topicZh = await translateText(topicEn, "zh");
+  const topicJa = await translateText(topicEn, "ja");
+  const topicKo = await translateText(topicEn, "ko");
+  const topics = {
+    en: topicEn,
+    tr: topicTr,
+    zh: topicZh,
+    ja: topicJa,
+    ko: topicKo,
+  };
+  const categories = {
+    en: "Fortune-telling",
+    tr: "Fal",
+    zh: "算命",
+    ja: "占い",
+    ko: "운세",
+  };
   for (const lang of langs) {
     const postData = await buildPost({
       lang,
