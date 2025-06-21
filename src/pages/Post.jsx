@@ -65,16 +65,19 @@ function Post() {
         className="w-full max-w-3xl bg-white/90 dark:bg-gray-900/90 rounded-3xl shadow-2xl p-4 md:p-10 mx-auto relative border border-purple-100 dark:border-purple-800"
       >
         {/* 대표 이미지 */}
-        {post.imageUrl && (
-          <div className="w-full flex justify-center mb-8">
-            <img
-              src={post.imageUrl}
-              alt={post.title || post.slug}
-              className="rounded-xl max-h-80 object-cover shadow-lg border border-purple-200 dark:border-purple-700"
-              style={{ width: '100%', maxWidth: 600 }}
-            />
-          </div>
-        )}
+        {(() => { 
+          console.log('post.imageUrl:', post.imageUrl); 
+          return post.imageUrl && (
+            <div className="w-full flex justify-center mb-8">
+              <img
+                src={post.imageUrl}
+                alt={post.title || post.slug}
+                className="rounded-xl max-h-80 object-cover shadow-lg border border-purple-200 dark:border-purple-700"
+                style={{ width: '100%', maxWidth: 600 }}
+              />
+            </div>
+          );
+        })()}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <div className="flex items-center gap-4 text-gray-500 dark:text-gray-400 text-sm flex-wrap">
             {/* 날짜는 사용자에게 노출하지 않음 */}
