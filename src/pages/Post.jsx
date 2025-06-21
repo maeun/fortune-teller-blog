@@ -3,16 +3,24 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { FaArrowLeft, FaCalendarAlt, FaClock, FaShare, FaStar, FaTag } from "react-icons/fa";
+import { FaArrowLeft, FaShare, FaStar, FaTag } from "react-icons/fa";
 import { db } from "../firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
 
 function Post() {
   const { lang, slug } = useParams();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // 언어 변경 시 해당 언어의 같은 slug로 이동
+  useEffect(() => {
+    if (i18n.language !== lang) {
+      navigate(`/post/${i18n.language}/${slug}`, { replace: true });
+    }
+    // eslint-disable-next-line
+  }, [i18n.language, lang, slug, navigate]);
 
   useEffect(() => {
     async function fetchPost() {
@@ -58,15 +66,7 @@ function Post() {
       >
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <div className="flex items-center gap-4 text-gray-500 dark:text-gray-400 text-sm flex-wrap">
-            {post.date && (
-              <span className="flex items-center gap-2">
-                <FaCalendarAlt />
-                {post.date}
-              </span>
-            )}
-            <span className="flex items-center gap-2">
-              <FaClock />
-            </span>
+            {/* 날짜는 사용자에게 노출하지 않음 */}
             {post.category && (
               <span className="flex items-center gap-2">
                 <FaTag />
