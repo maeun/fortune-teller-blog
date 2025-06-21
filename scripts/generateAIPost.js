@@ -188,13 +188,7 @@ async function uploadFortunePost() {
   const topicZh = await translateText(topicEn, "zh");
   const topicJa = await translateText(topicEn, "ja");
   const topicKo = await translateText(topicEn, "ko");
-  const topics = {
-    en: topicEn,
-    tr: topicTr,
-    zh: topicZh,
-    ja: topicJa,
-    ko: topicKo,
-  };
+  const topics = { en: topicEn, tr: topicTr, zh: topicZh, ja: topicJa, ko: topicKo };
   const categories = {
     en: "Fortune-telling",
     tr: "Fal",
@@ -202,6 +196,9 @@ async function uploadFortunePost() {
     ja: "占い",
     ko: "운세",
   };
+  // EN(영어) 기준으로 한 번만 이미지 생성
+  const enImagePrompt = `A beautiful, eye-catching illustration for a fortune-telling blog post about: ${topicEn} (${categories.en}), mystical, magical, trending on artstation, 512x512`;
+  const sharedImageUrl = await generateImageUrl(enImagePrompt, "en");
   for (const lang of langs) {
     const postData = await buildPost({
       lang,
@@ -209,6 +206,7 @@ async function uploadFortunePost() {
       date: dateStr,
       category: categories[lang],
       emoji: "🔮",
+      imageUrl: sharedImageUrl, // 모든 언어에 동일 이미지 사용
     });
     const post = {
       lang,
@@ -218,7 +216,7 @@ async function uploadFortunePost() {
       content: postData.content,
       keywords: postData.keywords,
       date: dateStr,
-      imageUrl: postData.imageUrl,
+      imageUrl: sharedImageUrl,
       slug,
     };
     await db.collection("posts").add(post);
