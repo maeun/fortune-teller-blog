@@ -1,7 +1,7 @@
 // Node.js: OpenAI API로 오늘의 운세 포스트 생성 후 Firestore에 업로드
 import dotenv from "dotenv";
 dotenv.config();
-import { Configuration, OpenAIApi } from "openai";
+import OpenAI from "openai";
 import { initializeApp, applicationDefault } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 
@@ -9,8 +9,7 @@ import { getFirestore } from "firebase-admin/firestore";
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const FIREBASE_PROJECT_ID = process.env.FIREBASE_PROJECT_ID;
 
-const configuration = new Configuration({ apiKey: OPENAI_API_KEY });
-const openai = new OpenAIApi(configuration);
+const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 
 initializeApp({
   credential: applicationDefault(),
@@ -25,14 +24,14 @@ async function translateText(text, targetLang) {
     ko: `Translate the following text to Korean:\n${text}`,
     tr: `Translate the following text to Turkish:\n${text}`,
   };
-  const res = await openai.createChatCompletion({
+  const res = await openai.chat.completions.create({
     model: "gpt-3.5-turbo",
     messages: [
       { role: "system", content: "You are a professional translator." },
       { role: "user", content: prompt[targetLang] },
     ],
   });
-  return res.data.choices[0].message.content.trim();
+  return res.choices[0].message.content.trim();
 }
 
 // 대표 이미지 생성 (OpenAI DALL·E)
@@ -41,20 +40,20 @@ async function generateImageUrl(prompt, lang) {
   if (lang !== "en") {
     translatedPrompt = await translateText(prompt, lang);
   }
-  const dalleRes = await openai.createImage({
+  const dalleRes = await openai.images.generate({
     prompt: translatedPrompt,
     n: 1,
     size: "512x512",
     response_format: "url",
   });
-  return dalleRes.data?.data?.[0]?.url || dalleRes.data?.[0]?.url || "";
+  return dalleRes.data?.[0]?.url || "";
 }
 
 // fortune-telling 관련 랜덤 주제 1개 생성 (영어)
 async function getRandomFortuneTopicEn() {
   const prompt =
     "Suggest a unique, interesting topic for a fortune-telling blog post. The topic should be related to fortune-telling, astrology, divination, or spiritual insight. Respond with only the topic title, no explanation.";
-  const res = await openai.createChatCompletion({
+  const res = await openai.chat.completions.create({
     model: "gpt-3.5-turbo",
     messages: [
       {
@@ -64,7 +63,7 @@ async function getRandomFortuneTopicEn() {
       { role: "user", content: prompt },
     ],
   });
-  return res.data.choices[0].message.content.trim().replace(/^[-#*]\s*/, "");
+  return res.choices[0].message.content.trim().replace(/^[-#*]\s*/, "");
 }
 
 // fortune-telling structured post 생성 (본문도 AI가 생성)
@@ -92,14 +91,14 @@ async function buildPost({ lang, topic, date, category, emoji }) {
   const descPrompt = `Write a one-sentence description for a fortune-telling blog post titled: "${topic}". Respond in ${
     lang === "en" ? "English" : lang === "ko" ? "Korean" : "Turkish"
   }.`;
-  const descRes = await openai.createChatCompletion({
+  const descRes = await openai.chat.completions.create({
     model: "gpt-3.5-turbo",
     messages: [
       { role: "system", content: "You are a fortune-telling blog writer." },
       { role: "user", content: descPrompt },
     ],
   });
-  const description = descRes.data.choices[0].message.content.trim();
+  const description = descRes.choices[0].message.content.trim();
   // 카테고리 번역
   let categoryTranslated = category;
   if (lang !== "en") categoryTranslated = await translateText(category, lang);
@@ -107,7 +106,7 @@ async function buildPost({ lang, topic, date, category, emoji }) {
   const kwPrompt = `Suggest 12 SEO-friendly keywords for a fortune-telling blog post about \"${topic}\" in the category \"${categoryTranslated}\". Respond as a comma-separated list only in ${
     lang === "en" ? "English" : lang === "ko" ? "Korean" : "Turkish"
   }.`;
-  const kwRes = await openai.createChatCompletion({
+  const kwRes = await openai.chat.completions.create({
     model: "gpt-3.5-turbo",
     messages: [
       {
@@ -117,7 +116,7 @@ async function buildPost({ lang, topic, date, category, emoji }) {
       { role: "user", content: kwPrompt },
     ],
   });
-  const keywordsArr = kwRes.data.choices[0].message.content
+  const keywordsArr = kwRes.choices[0].message.content
     .split(",")
     .map((k) => k.trim())
     .filter(Boolean);
@@ -125,14 +124,14 @@ async function buildPost({ lang, topic, date, category, emoji }) {
   const bodyPrompt = `Write a long, detailed, SEO-optimized fortune-telling blog post about the topic: "${topic}" in the category "${categoryTranslated}". The content MUST NOT include any of the following: title, category, description, keywords, any promotional or call-to-action text, any example, any table, any markdown header, any YAML frontmatter, any section or mention about birthdays, zodiac, astrology, numerology, AI, links, or SEO keywords. Focus ONLY on the topic and category. Write only the main body content, as if it is a single, uninterrupted article. Respond in ${
     lang === "en" ? "English" : lang === "ko" ? "Korean" : "Turkish"
   }.`;
-  const bodyRes = await openai.createChatCompletion({
+  const bodyRes = await openai.chat.completions.create({
     model: "gpt-3.5-turbo",
     messages: [
       { role: "system", content: "You are a fortune-telling blog writer." },
       { role: "user", content: bodyPrompt },
     ],
   });
-  const body = bodyRes.data.choices[0].message.content.trim();
+  const body = bodyRes.choices[0].message.content.trim();
   // 본문 후처리
   const cleanedBody = cleanContent(body);
   // 대표 이미지 생성
