@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { FaArrowLeft, FaCalendarAlt, FaClock, FaShare, FaStar, FaTag } from "react-icons/fa";
 import { db } from "../firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { collection, query, where, getDocs } from "firebase/firestore";
 
 function Post() {
   const { lang, slug } = useParams();
@@ -17,9 +17,14 @@ function Post() {
   useEffect(() => {
     async function fetchPost() {
       setLoading(true);
-      const q = await getDoc(doc(db, "posts", `${lang}-${slug}`));
-      if (q.exists()) {
-        setPost(q.data());
+      const q = query(
+        collection(db, "posts"),
+        where("lang", "==", lang),
+        where("slug", "==", slug)
+      );
+      const snap = await getDocs(q);
+      if (!snap.empty) {
+        setPost(snap.docs[0].data());
       } else {
         setPost(null);
       }
@@ -61,7 +66,6 @@ function Post() {
             )}
             <span className="flex items-center gap-2">
               <FaClock />
-              {/* Optionally calculate reading time here */}
             </span>
             {post.category && (
               <span className="flex items-center gap-2">
