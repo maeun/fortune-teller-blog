@@ -58,14 +58,15 @@ async function generateImageUrl(prompt, lang) {
   if (lang !== "en") {
     translatedPrompt = await translateText(prompt, lang);
   }
-  // DALL·E API 호출
+  // DALL·E API 호출 (OpenAIApi v4 방식)
   const dalleRes = await openai.createImage({
     prompt: translatedPrompt,
     n: 1,
     size: "512x512",
     response_format: "url",
   });
-  return dalleRes.data.data[0].url;
+  // v4: dalleRes.data.data[0].url, v3: dalleRes.data[0].url
+  return (dalleRes.data?.data?.[0]?.url) || (dalleRes.data?.[0]?.url) || "";
 }
 
 // fortune-telling structured post 생성 (본문도 AI가 생성)
