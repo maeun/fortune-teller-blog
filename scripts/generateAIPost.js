@@ -1,8 +1,9 @@
 // Node.js: OpenAI API로 오늘의 운세 포스트 생성 후 Firestore에 업로드
-require("dotenv").config();
-const { Configuration, OpenAIApi } = require("openai");
-const { initializeApp, applicationDefault } = require("firebase-admin/app");
-const { getFirestore } = require("firebase-admin/firestore");
+import dotenv from "dotenv";
+dotenv.config();
+import { Configuration, OpenAIApi } from "openai";
+import { initializeApp, applicationDefault } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
 
 // 환경 변수에서 키 불러오기
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
