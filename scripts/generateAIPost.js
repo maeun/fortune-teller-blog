@@ -46,7 +46,7 @@ async function generateImageUrl(prompt, lang) {
     size: "512x512",
     response_format: "url",
   });
-  return (dalleRes.data?.data?.[0]?.url) || (dalleRes.data?.[0]?.url) || "";
+  return dalleRes.data?.data?.[0]?.url || dalleRes.data?.[0]?.url || "";
 }
 
 // fortune-telling 관련 랜덤 주제 1개 생성 (영어)
@@ -56,7 +56,10 @@ async function getRandomFortuneTopicEn() {
   const res = await openai.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: [
-      { role: "system", content: "You are a creative fortune-telling blog writer." },
+      {
+        role: "system",
+        content: "You are a creative fortune-telling blog writer.",
+      },
       { role: "user", content: prompt },
     ],
   });
@@ -66,7 +69,9 @@ async function getRandomFortuneTopicEn() {
 // fortune-telling structured post 생성 (본문도 AI가 생성)
 async function buildPost({ lang, topic, date, category, emoji }) {
   // 설명 생성
-  const descPrompt = `Write a one-sentence description for a fortune-telling blog post titled: "${topic}". Respond in ${lang === "en" ? "English" : lang === "ko" ? "Korean" : "Turkish"}.`;
+  const descPrompt = `Write a one-sentence description for a fortune-telling blog post titled: "${topic}". Respond in ${
+    lang === "en" ? "English" : lang === "ko" ? "Korean" : "Turkish"
+  }.`;
   const descRes = await openai.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: [
@@ -79,17 +84,27 @@ async function buildPost({ lang, topic, date, category, emoji }) {
   let categoryTranslated = category;
   if (lang !== "en") categoryTranslated = await translateText(category, lang);
   // 키워드 생성
-  const kwPrompt = `Suggest 12 SEO-friendly keywords for a fortune-telling blog post about "${topic}" in the category "${categoryTranslated}". Respond as a comma-separated list only in ${lang === "en" ? "English" : lang === "ko" ? "Korean" : "Turkish"}.`;
+  const kwPrompt = `Suggest 12 SEO-friendly keywords for a fortune-telling blog post about "${topic}" in the category "${categoryTranslated}". Respond as a comma-separated list only in ${
+    lang === "en" ? "English" : lang === "ko" ? "Korean" : "Turkish"
+  }.`;
   const kwRes = await openai.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: [
-      { role: "system", content: "You are an SEO expert for fortune-telling blogs." },
+      {
+        role: "system",
+        content: "You are an SEO expert for fortune-telling blogs.",
+      },
       { role: "user", content: kwPrompt },
     ],
   });
-  const keywordsArr = kwRes.data.choices[0].message.content.split(",").map(k => k.trim()).filter(Boolean);
+  const keywordsArr = kwRes.data.choices[0].message.content
+    .split(",")
+    .map((k) => k.trim())
+    .filter(Boolean);
   // 본문 생성 (title, category, 홍보문구 없이, 카테고리 중심, 길고 SEO 최적화, 마크다운)
-  const bodyPrompt = `Write a long, detailed, SEO-optimized fortune-telling blog post about the topic: "${topic}" in the category "${categoryTranslated}". Do NOT include the title, category, or any promotional or call-to-action text. Focus only on the topic and category. Use markdown or HTML for formatting. Respond in ${lang === "en" ? "English" : lang === "ko" ? "Korean" : "Turkish"}.`;
+  const bodyPrompt = `Write a long, detailed, SEO-optimized fortune-telling blog post about the topic: "${topic}" in the category "${categoryTranslated}". Do NOT include the title, category, or any promotional or call-to-action text. Focus only on the topic and category. Use markdown or HTML for formatting. Respond in ${
+    lang === "en" ? "English" : lang === "ko" ? "Korean" : "Turkish"
+  }.`;
   const bodyRes = await openai.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: [
@@ -114,7 +129,10 @@ async function buildPost({ lang, topic, date, category, emoji }) {
 async function uploadFortunePost() {
   const now = new Date();
   const dateStr = now.toISOString().slice(0, 16).replace("T", " "); // YYYY-MM-DD HH:mm
-  const slug = `ai-fortune-${now.toISOString().replace(/[-:T.]/g, "").slice(0, 12)}`;
+  const slug = `ai-fortune-${now
+    .toISOString()
+    .replace(/[-:T.]/g, "")
+    .slice(0, 12)}`;
   const langs = ["en", "ko", "tr"];
   // 1. 영어로 fortune-telling 주제 1개 생성
   const topicEn = await getRandomFortuneTopicEn();
