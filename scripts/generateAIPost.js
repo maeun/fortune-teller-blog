@@ -68,21 +68,25 @@ async function getRandomFortuneTopicEn() {
 
 // fortune-telling structured post 생성 (본문도 AI가 생성)
 function cleanContent(content) {
-  // Remove YAML frontmatter
-  content = content.replace(/^---[\s\S]*?---/g, "");
+  // Remove YAML frontmatter (--- ... ---)
+  content = content.replace(/^---[\s\S]*?---/gm, "");
   // Remove markdown/html title headers (e.g. #, ##, <h1>, <h2>, etc.)
   content = content.replace(/^#+\s.*$/gm, "");
   content = content.replace(/<h[1-6][^>]*>.*?<\/h[1-6]>/gi, "");
-  // Remove category, keywords, description, date, slug, etc. lines
-  content = content.replace(/^(category|keywords?|description|date|slug|title)\s*[:：].*$/gim, "");
-  // Remove tables (markdown and html)
-  content = content.replace(/\|.*\|/g, "");
+  // Remove lines starting with title, category, keywords, description, date, slug, etc.
+  content = content.replace(/^(title|category|keywords?|description|date|slug)\s*[:：].*$/gim, "");
+  // Remove markdown/html tables
+  content = content.replace(/\|[^\n]*\|/g, "");
   content = content.replace(/<table[\s\S]*?<\/table>/gi, "");
-  // Remove example, CTA, promotional, astrology, numerology, AI, link, etc. sections
-  content = content.replace(/(예시|example|call to action|cta|홍보문구|astrology|numerology|AI|인공지능|키워드|keywords?|링크|link|frontmatter|yaml|표|table|zodiac|birth ?date|생년월일|생일|수비학|점성술|태어난 날|AI fortune|AI-powered|https?:\/\/\S+|\[.*?\]\(.*?\))/gim, "");
+  // Remove example, CTA, promotional, astrology, numerology, AI, link, etc. sections (including Turkish/Korean)
+  content = content.replace(/(예시|example|call to action|cta|홍보문구|astrology|numerology|AI|인공지능|키워드|keywords?|링크|link|frontmatter|yaml|표|table|zodiac|birth ?date|생년월일|생일|수비학|점성술|태어난 날|AI fortune|AI-powered|https?:\/\/\S+|\[.*?\]\(.*?\)|SEO-Friendly Keywords|SEO keywords|SEO 키워드|SEO\s*:)/gim, "");
+  // Remove blockquotes, images, and any remaining markdown artifacts
+  content = content.replace(/^>.*$/gm, "");
+  content = content.replace(/!\[.*?\]\(.*?\)/g, "");
   // Remove repeated empty lines
   content = content.replace(/\n{3,}/g, "\n\n");
-  // Trim
+  // Remove leading/trailing whitespace and empty lines
+  content = content.replace(/^[ \t]*\n/gm, "");
   return content.trim();
 }
 
