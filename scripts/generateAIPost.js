@@ -121,7 +121,7 @@ function cleanContent(content) {
   return content.trim();
 }
 
-async function buildPost({ lang, topic, date, category, emoji }) {
+async function buildPost({ lang, topic, date, category, emoji, imageUrl }) {
   // 설명 생성
   const descPrompt = `Write a one-sentence description for a fortune-telling blog post titled: "${topic}". Respond in ${
     lang === "en"
@@ -183,10 +183,7 @@ async function buildPost({ lang, topic, date, category, emoji }) {
   const body = bodyRes.choices[0].message.content.trim();
   // 본문 후처리
   const cleanedBody = cleanContent(body);
-  // 대표 이미지 생성
-  const imagePrompt = `A beautiful, eye-catching illustration for a fortune-telling blog post about: ${topic} (${categoryTranslated}), mystical, magical, trending on artstation, 512x512`;
-  const imageUrl = await generateImageUrl(imagePrompt, lang);
-  // 반환
+  // imageUrl은 외부에서 주입받음
   return {
     description,
     category: categoryTranslated,
@@ -225,7 +222,7 @@ async function uploadFortunePost() {
     ja: "占い",
     ko: "운세",
   };
-  // EN(영어) 기준으로 한 번만 이미지 생성
+  // EN(영어) 기준으로 한 번만 이미지 생성 및 업로드
   const enImagePrompt = `A beautiful, eye-catching illustration for a fortune-telling blog post about: ${topicEn} (${categories.en}), mystical, magical, trending on artstation, 512x512`;
   const sharedImageUrl = await generateImageUrl(enImagePrompt, "en");
   for (const lang of langs) {
