@@ -10,12 +10,14 @@ import fetch from "node-fetch";
 // 환경 변수에서 키 불러오기
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const FIREBASE_PROJECT_ID = process.env.FIREBASE_PROJECT_ID;
+const FIREBASE_STORAGE_BUCKET = process.env.FIREBASE_STORAGE_BUCKET;
 
 const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 
 initializeApp({
   credential: applicationDefault(),
   projectId: FIREBASE_PROJECT_ID,
+  storageBucket: FIREBASE_STORAGE_BUCKET, // Storage 버킷 명시
 });
 const db = getFirestore();
 
@@ -66,7 +68,9 @@ async function generateImageUrl(prompt, lang) {
   const dalleUrl = dalleRes.data?.[0]?.url || "";
   if (!dalleUrl) return "";
   // 파일명 생성 (timestamp 기반)
-  const filename = `fortune-${Date.now()}-${Math.floor(Math.random() * 10000)}.png`;
+  const filename = `fortune-${Date.now()}-${Math.floor(
+    Math.random() * 10000
+  )}.png`;
   return await uploadImageToFirebase(dalleUrl, filename);
 }
 
@@ -207,7 +211,13 @@ async function uploadFortunePost() {
   const topicZh = await translateText(topicEn, "zh");
   const topicJa = await translateText(topicEn, "ja");
   const topicKo = await translateText(topicEn, "ko");
-  const topics = { en: topicEn, tr: topicTr, zh: topicZh, ja: topicJa, ko: topicKo };
+  const topics = {
+    en: topicEn,
+    tr: topicTr,
+    zh: topicZh,
+    ja: topicJa,
+    ko: topicKo,
+  };
   const categories = {
     en: "Fortune-telling",
     tr: "Fal",
