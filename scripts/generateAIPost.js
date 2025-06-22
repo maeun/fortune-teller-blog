@@ -4,6 +4,8 @@ dotenv.config();
 import OpenAI from "openai";
 import { initializeApp, applicationDefault } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
+import { getStorage } from "firebase-admin/storage";
+import fetch from "node-fetch";
 
 // 환경 변수에서 키 불러오기
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
@@ -36,7 +38,20 @@ async function translateText(text, targetLang) {
   return res.choices[0].message.content.trim();
 }
 
-// 대표 이미지 생성 (OpenAI DALL·E)
+// DALL·E 이미지 다운로드 후 Firebase Storage에 업로드
+async function uploadImageToFirebase(imageUrl, filename) {
+  const storage = getStorage();
+  const bucket = storage.bucket();
+  const res = await fetch(imageUrl);
+  if (!res.ok) throw new Error("Failed to download image from DALL·E");
+  const buffer = await res.buffer();
+  const file = bucket.file(`ai-images/${filename}`);
+  await file.save(buffer, { contentType: "image/png", public: true });
+  // 공개 URL 반환
+  return `https://storage.googleapis.com/${bucket.name}/ai-images/${filename}`;
+}
+
+// 대표 이미지 생성 (OpenAI DALL·E → Storage 업로드)
 async function generateImageUrl(prompt, lang) {
   let translatedPrompt = prompt;
   if (lang !== "en") {
@@ -48,7 +63,11 @@ async function generateImageUrl(prompt, lang) {
     size: "512x512",
     response_format: "url",
   });
-  return dalleRes.data?.[0]?.url || "";
+  const dalleUrl = dalleRes.data?.[0]?.url || "";
+  if (!dalleUrl) return "";
+  // 파일명 생성 (timestamp 기반)
+  const filename = `fortune-${Date.now()}-${Math.floor(Math.random() * 10000)}.png`;
+  return await uploadImageToFirebase(dalleUrl, filename);
 }
 
 // fortune-telling 관련 랜덤 주제 1개 생성 (영어)
