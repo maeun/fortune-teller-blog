@@ -156,23 +156,27 @@ function Post() {
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
         {/* 이전/다음 글 네비게이션 */}
-        <div className="flex justify-between items-center mt-12 border-t pt-8 border-purple-200 dark:border-purple-800">
+        <div className="flex flex-col md:flex-row justify-between items-stretch gap-4 mt-12 border-t pt-8 border-purple-200 dark:border-purple-800">
           {prevPost ? (
             <Link
               to={`/post/${prevPost.lang}/${prevPost.slug}`}
-              className="text-purple-700 dark:text-purple-300 hover:underline font-semibold"
+              className="flex-1 text-center px-4 py-3 font-semibold rounded-xl border border-purple-300 dark:border-purple-700 bg-purple-50 dark:bg-purple-900 text-purple-700 dark:text-purple-200 hover:bg-purple-100 dark:hover:bg-purple-800 transition-all duration-150 flex items-center justify-center gap-2"
+              style={{ minHeight: 56 }}
             >
-              ← {prevPost.title}
+              <span className="text-lg">←</span>
+              <span className="block text-base md:text-lg text-left">{prevPost.title}</span>
             </Link>
-          ) : <span />}
+          ) : <div className="flex-1" />}
           {nextPost ? (
             <Link
               to={`/post/${nextPost.lang}/${nextPost.slug}`}
-              className="text-purple-700 dark:text-purple-300 hover:underline font-semibold"
+              className="flex-1 text-center px-4 py-3 font-semibold rounded-xl border border-purple-300 dark:border-purple-700 bg-purple-50 dark:bg-purple-900 text-purple-700 dark:text-purple-200 hover:bg-purple-100 dark:hover:bg-purple-800 transition-all duration-150 flex items-center justify-center gap-2"
+              style={{ minHeight: 56 }}
             >
-              {nextPost.title} →
+              <span className="block text-base md:text-lg text-right">{nextPost.title}</span>
+              <span className="text-lg">→</span>
             </Link>
-          ) : <span />}
+          ) : <div className="flex-1" />}
         </div>
         {/* 관련글 */}
         {relatedPosts.length > 0 && (
