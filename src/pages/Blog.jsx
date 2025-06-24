@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaTag } from 'react-icons/fa';
+import { FaTag, FaUser } from 'react-icons/fa';
+import { FaRegCalendarAlt } from 'react-icons/fa';
 import useFirestorePosts from '../hooks/useFirestorePosts';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 
@@ -36,11 +37,12 @@ const Blog = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="border-b border-gray-200 dark:border-gray-700 pb-8 last:border-b-0 last:pb-0"
+                  className="rounded-xl border border-gray-200 dark:border-purple-800 bg-white dark:bg-gray-950 shadow-md dark:shadow-lg hover:shadow-xl dark:hover:shadow-2xl transition-shadow flex flex-col md:flex-row overflow-hidden"
                 >
-                  <Link to={`/post/${post.lang}/${post.slug}`} className="block group">
+                  <Link to={`/post/${post.lang}/${post.slug}`} className="flex flex-1 flex-col md:flex-row group">
+                    {/* 이미지 (좌측, 데스크탑에서만 보임) */}
                     {post.imageUrl && (
-                      <div className="w-full h-48 bg-gray-200 dark:bg-gray-800 flex items-center justify-center overflow-hidden mb-4 rounded-lg">
+                      <div className="md:w-56 w-full h-48 md:h-auto flex-shrink-0 bg-gray-100 dark:bg-gray-900 flex items-center justify-center overflow-hidden">
                         <LazyLoadImage
                           src={post.imageUrl}
                           alt={post.title || post.slug}
@@ -49,21 +51,23 @@ const Blog = () => {
                         />
                       </div>
                     )}
-                    <div className="space-y-4">
-                      <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
-                        {post.category && (
-                          <span className="flex items-center">
-                            <FaTag className="mr-2" />
-                            {post.category}
-                          </span>
-                        )}
-                      </div>
-                      <h2 className="text-2xl font-semibold text-gray-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                    {/* 텍스트 영역 */}
+                    <div className="flex-1 p-6 flex flex-col justify-center">
+                      <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-300 transition-colors mb-2 line-clamp-2">
                         {post.title || post.slug}
                       </h2>
-                      <p className="text-gray-600 dark:text-gray-400">
+                      <p className="text-gray-600 dark:text-gray-200 text-sm md:text-base line-clamp-2 md:line-clamp-3 mb-4">
                         {post.excerpt || post.description || ''}
                       </p>
+                      {/* 부가 정보: 카테고리, 날짜만 표시 (저자/태그 제거) */}
+                      <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500 dark:text-purple-300 mt-auto pt-2 border-t border-purple-100 dark:border-purple-800">
+                        {post.category && (
+                          <span className="flex items-center gap-1"><FaTag />{post.category}</span>
+                        )}
+                        {post.date && (
+                          <span className="flex items-center gap-1"><FaRegCalendarAlt />{post.date}</span>
+                        )}
+                      </div>
                     </div>
                   </Link>
                 </motion.article>

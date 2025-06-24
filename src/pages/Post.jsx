@@ -1,11 +1,12 @@
 // src/pages/Post.jsx
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { FaArrowLeft, FaShare, FaStar, FaTag } from "react-icons/fa";
+import { FaArrowLeft, FaShare, FaTag, FaRegCalendarAlt } from "react-icons/fa";
 import { db } from "../firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
+import useAllPosts from "../hooks/useAllPosts";
 
 function Post() {
   const { lang, slug } = useParams();
@@ -13,6 +14,10 @@ function Post() {
   const navigate = useNavigate();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [relatedPosts, setRelatedPosts] = useState([]);
+  const { posts: allPosts, loading: allPostsLoading } = useAllPosts(lang);
+  const [prevPost, setPrevPost] = useState(null);
+  const [nextPost, setNextPost] = useState(null);
 
   // 언어 변경 시 해당 언어의 같은 slug로 이동
   useEffect(() => {
@@ -41,11 +46,35 @@ function Post() {
     fetchPost();
   }, [lang, slug]);
 
+  // 관련글(같은 카테고리 최신글 2개)
   useEffect(() => {
-    if (post && post.imageUrl) {
-      console.log("post.imageUrl:", post.imageUrl);
+    async function fetchRelated() {
+      if (!post || !post.category) return setRelatedPosts([]);
+      const q = query(
+        collection(db, "posts"),
+        where("lang", "==", lang),
+        where("category", "==", post.category),
+        where("slug", "!=", slug)
+      );
+      const snap = await getDocs(q);
+      const rel = snap.docs.map(doc => doc.data()).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      setRelatedPosts(rel.slice(0, 2));
     }
-  }, [post]);
+    fetchRelated();
+  }, [post, lang, slug]);
+
+  // 이전/다음 글 설정
+  useEffect(() => {
+    if (!post || !allPosts || allPosts.length === 0) {
+      setPrevPost(null);
+      setNextPost(null);
+      return;
+    }
+    const sorted = [...allPosts].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    const idx = sorted.findIndex(p => p.slug === slug);
+    setPrevPost(idx < sorted.length - 1 ? sorted[idx + 1] : null);
+    setNextPost(idx > 0 ? sorted[idx - 1] : null);
+  }, [allPosts, post, slug]);
 
   if (loading) {
     return (
@@ -89,13 +118,19 @@ function Post() {
             />
           </div>
         )}
+        {/* 부가 정보: 카테고리, 날짜만 표시 (저자/태그 제거) */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <div className="flex items-center gap-4 text-gray-500 dark:text-gray-400 text-sm flex-wrap">
-            {/* 날짜는 사용자에게 노출하지 않음 */}
             {post.category && (
               <span className="flex items-center gap-2">
                 <FaTag />
                 {post.category}
+              </span>
+            )}
+            {post.date && (
+              <span className="flex items-center gap-2">
+                <FaRegCalendarAlt />
+                {post.date}
               </span>
             )}
           </div>
@@ -120,6 +155,43 @@ function Post() {
           className="text-lg leading-relaxed break-words prose prose-purple dark:prose-invert"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
+        {/* 이전/다음 글 네비게이션 */}
+        <div className="flex justify-between items-center mt-12 border-t pt-8 border-purple-200 dark:border-purple-800">
+          {prevPost ? (
+            <Link
+              to={`/post/${prevPost.lang}/${prevPost.slug}`}
+              className="text-purple-700 dark:text-purple-300 hover:underline font-semibold"
+            >
+              ← {prevPost.title}
+            </Link>
+          ) : <span />}
+          {nextPost ? (
+            <Link
+              to={`/post/${nextPost.lang}/${nextPost.slug}`}
+              className="text-purple-700 dark:text-purple-300 hover:underline font-semibold"
+            >
+              {nextPost.title} →
+            </Link>
+          ) : <span />}
+        </div>
+        {/* 관련글 */}
+        {relatedPosts.length > 0 && (
+          <div className="mt-12 border-t pt-8 border-purple-200 dark:border-purple-800">
+            <h3 className="text-xl font-bold mb-4 text-purple-700 dark:text-purple-300">{t('common.relatedPosts') || 'Related Posts'}</h3>
+            <div className="flex flex-col md:flex-row gap-6">
+              {relatedPosts.map(rp => (
+                <Link
+                  key={rp.slug}
+                  to={`/post/${rp.lang}/${rp.slug}`}
+                  className="flex-1 bg-white dark:bg-gray-900 border border-purple-100 dark:border-purple-800 rounded-xl shadow hover:shadow-lg p-4 transition-all"
+                >
+                  <div className="font-semibold text-purple-700 dark:text-purple-300 mb-2">{rp.title}</div>
+                  <div className="text-gray-600 dark:text-gray-300 text-sm line-clamp-2">{rp.excerpt || rp.description || ''}</div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </motion.div>
     </div>
   );
