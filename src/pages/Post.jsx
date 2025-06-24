@@ -152,7 +152,7 @@ function Post() {
           </p>
         )}
         <div
-          className="text-lg leading-relaxed break-words prose prose-purple dark:prose-invert"
+          className="text-lg leading-relaxed break-words prose prose-purple dark:prose-invert dark:text-gray-100 dark:prose-headings:text-gray-100 dark:prose-strong:text-gray-100 dark:prose-a:text-purple-300 dark:prose-blockquote:text-gray-300"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
         {/* 이전/다음 글 네비게이션 */}
